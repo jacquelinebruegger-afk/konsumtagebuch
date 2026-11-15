@@ -1,0 +1,29 @@
+---
+description: Vorgaben für das Konsumtagebuch (Design, Barrierefreiheit, Texte)
+alwaysApply: true
+---
+
+# Konsumtagebuch
+
+Kontext und Entscheidungen stehen in `docs/PROJEKT.md`. Bitte vor grösseren Änderungen lesen.
+
+## Technik
+- Vite, React, TypeScript, React Router (HashRouter). Reines Frontend, Daten im `localStorage`.
+- Vor jedem Commit: `npm run typecheck`, `npm test` und `npm run build` müssen laufen.
+
+## Texte
+- Alle sichtbaren Texte stehen in `src/lib/de.ts`, `fr.ts` und `it.ts`. Neue Texte immer in allen drei Sprachen anlegen, keine festen Strings in Komponenten.
+- Anrede: «Sie» (Deutsch), «vous» (Französisch), «Lei» (Italienisch). Ton ruhig, nicht wertend.
+- Kategorienamen und Einheiten der Standardkategorien sind übersetzbar (`@`-Schlüssel), eigene Namen bleiben unverändert.
+
+## Design
+- Farben und Abstände nur über die Variablen in `src/styles.css` (`:root`).
+- Primärfarbe `#00667a`. Das helle Türkis `#00bed5` nur dekorativ, nie für Text.
+- Titel in Roboto Slab, Fliesstext in Source Sans 3.
+
+## Barrierefreiheit (Pflicht)
+- Textkontrast mindestens 4,5:1, Bedienelemente und Rahmen mindestens 3:1.
+- Status nie nur über Farbe zeigen, immer zusätzlich Text oder Icon.
+- Klickflächen mindestens 44 mal 44 px. Jedes Formularfeld hat ein sichtbares Label.
+- Tastaturbedienung und sichtbarer Fokus müssen überall funktionieren. Dialoge nutzen `<dialog>` (siehe `Modal`).
+- Responsive prüfen: Mobile (ca. 390 px) und Desktop (ab 900 px).
