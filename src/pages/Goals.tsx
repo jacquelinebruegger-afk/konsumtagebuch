@@ -30,7 +30,7 @@ function nextPeriod(g: Goal): { start: string; end: string } {
   return { start: addDays(g.end, 1), end: addDays(g.end, 1 + len) }
 }
 
-function useResults(): GoalResult[] {
+export function useResults(): GoalResult[] {
   const { data } = useStore()
   const { entryUnitRaw } = useI18n()
   const today = toDateStr(new Date())
@@ -46,7 +46,7 @@ function useResults(): GoalResult[] {
   )
 }
 
-function RowView({ row, period }: { row: GoalRow; period: GoalPeriod }) {
+export function RowView({ row, period }: { row: GoalRow; period: GoalPeriod }) {
   const { t, lang } = useI18n()
   const v = fmtNumber(row.value, lang)
   const tg = fmtNumber(row.target, lang)

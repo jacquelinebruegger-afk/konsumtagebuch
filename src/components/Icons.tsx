@@ -39,6 +39,15 @@ export const IconTarget = (p: P) =>
     </>,
     p,
   )
+export const IconHome = (p: P) =>
+  base(
+    <>
+      <path d="M4 11 12 4l8 7" />
+      <path d="M6 9.5V20h12V9.5" />
+      <path d="M10 20v-5h4v5" />
+    </>,
+    p,
+  )
 export const IconUser = (p: P) =>
   base(
     <>

@@ -9,6 +9,7 @@ import { CategoriesManage, CategoryCatalog, CategoryForm } from './pages/Categor
 import { DiaryEmptyDetail, DiaryLayout, EntryDetail } from './pages/Diary'
 import { EntryEdit, WizardCategory, WizardDetails, WizardFeeling } from './pages/EntryForms'
 import { GoalForm, GoalsPage } from './pages/Goals'
+import { HomePage } from './pages/Home'
 import { ImprintPage, LockScreen, MorePage, PrivacyPage, SharePage, SupportPage } from './pages/More'
 
 function Gate() {
@@ -19,7 +20,8 @@ function Gate() {
     <HashRouter>
       <Routes>
         <Route element={<Shell />}>
-          <Route index element={<Navigate to="/tagebuch" replace />} />
+          <Route index element={<Navigate to="/start" replace />} />
+          <Route path="start" element={<HomePage />} />
           <Route path="tagebuch" element={<DiaryLayout />}>
             <Route index element={<DiaryEmptyDetail />} />
             <Route path="eintrag/:id" element={<EntryDetail />} />
@@ -43,7 +45,7 @@ function Gate() {
           <Route path="mehr/unterstuetzung" element={<SupportPage />} />
           <Route path="mehr/datenschutz" element={<PrivacyPage />} />
           <Route path="mehr/impressum" element={<ImprintPage />} />
-          <Route path="*" element={<Navigate to="/tagebuch" replace />} />
+          <Route path="*" element={<Navigate to="/start" replace />} />
         </Route>
       </Routes>
     </HashRouter>

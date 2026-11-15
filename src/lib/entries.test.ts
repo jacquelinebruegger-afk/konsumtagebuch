@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { dayPart, dayPartInFuture } from './dates'
+import { dailyGoalOnTrackToday } from './goals'
 import { setDrinkCount, sortDrinks, standardDrinks } from './catalog'
 
 describe('Alkohol: Standardgetränke', () => {
@@ -29,5 +30,32 @@ describe('Tageszeit', () => {
     expect(dayPartInFuture('2026-11-15', 'evening', now)).toBe(true)
     expect(dayPartInFuture('2026-11-15', 'afternoon', now)).toBe(false)
     expect(dayPartInFuture('2026-11-14', 'night', now)).toBe(false)
+  })
+})
+
+describe('Startseite: Tagesziel heute', () => {
+  const goal = { id: 'g', categoryId: 'c', period: 'week' as const, start: '2026-11-09', end: '2026-11-15', maxPerDay: 2 }
+  const entry = (amount: number) => ({
+    id: 'e' + amount,
+    categoryId: 'c',
+    at: new Date(2026, 10, 15, 12).toISOString(),
+    amount,
+    unitIdx: 0,
+    context: '',
+    craving: 0,
+    tension: 0,
+    mood: 0,
+    pain: 0,
+    notes: '',
+  })
+
+  it('meldet ein eingehaltenes Tagesziel, auch ohne Einträge', () => {
+    expect(dailyGoalOnTrackToday([goal], [], '2026-11-15')?.value).toBe(0)
+    expect(dailyGoalOnTrackToday([goal], [entry(2)], '2026-11-15')?.value).toBe(2)
+  })
+
+  it('meldet nichts, wenn das Tagesziel überschritten ist oder nicht gilt', () => {
+    expect(dailyGoalOnTrackToday([goal], [entry(3)], '2026-11-15')).toBeUndefined()
+    expect(dailyGoalOnTrackToday([goal], [], '2026-11-16')).toBeUndefined()
   })
 })

@@ -95,3 +95,19 @@ export function dailyGoalReachedYesterday(
     return total <= g.maxPerDay
   })
 }
+
+/** Tagesziel, das heute bisher eingehalten wird (für den positiven Hinweis auf der Startseite). */
+export function dailyGoalOnTrackToday(
+  goals: Goal[],
+  entries: Entry[],
+  today: string,
+): { goal: Goal; value: number } | undefined {
+  for (const g of goals) {
+    if (g.maxPerDay == null || today < g.start || today > g.end) continue
+    const value = entries
+      .filter((e) => e.categoryId === g.categoryId && entryDay(e) === today)
+      .reduce((s, e) => s + e.amount, 0)
+    if (value <= g.maxPerDay) return { goal: g, value }
+  }
+  return undefined
+}
