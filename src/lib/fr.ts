@@ -7,7 +7,7 @@ export const fr: Record<Key, string> = {
   'nav.skip': 'Aller au contenu',
   'nav.diary': 'Journal',
   'nav.goals': 'Objectifs',
-  'nav.more': 'Plus',
+  'nav.more': 'Profil',
 
   'common.back': 'Retour',
   'common.close': 'Fermer',
@@ -257,7 +257,7 @@ export const fr: Record<Key, string> = {
   'goalForm.rangeError': 'La date de fin doit être postérieure à la date de début.',
   'goalForm.noCategory': 'Veuillez d’abord créer une catégorie.',
 
-  'more.title': 'Plus',
+  'more.title': 'Profil',
   'more.diary': 'Journal',
   'more.settings': 'Paramètres',
   'more.info': 'Informations',

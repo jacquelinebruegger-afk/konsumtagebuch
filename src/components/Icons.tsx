@@ -39,12 +39,11 @@ export const IconTarget = (p: P) =>
     </>,
     p,
   )
-export const IconDots = (p: P) =>
+export const IconUser = (p: P) =>
   base(
     <>
-      <circle cx="5.5" cy="12" r="1.3" fill="currentColor" />
-      <circle cx="12" cy="12" r="1.3" fill="currentColor" />
-      <circle cx="18.5" cy="12" r="1.3" fill="currentColor" />
+      <circle cx="12" cy="8.5" r="3.7" />
+      <path d="M4.5 20.5c.6-4 3.6-6.2 7.5-6.2s6.9 2.2 7.5 6.2" />
     </>,
     p,
   )

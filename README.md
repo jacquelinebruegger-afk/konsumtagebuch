@@ -13,7 +13,7 @@ npm test         # Tests der Zielberechnung
 
 ## Aufbau
 
-- `src/pages/` – Tagebuch, Eintrag erfassen (3 Schritte) und bearbeiten, Ziele, Mehr (Einstellungen, Kategorien, Teilen, Support, Datenschutz, Impressum, PIN-Sperre)
+- `src/pages/` – Tagebuch, Eintrag erfassen (3 Schritte) und bearbeiten, Ziele, Profil (Einstellungen, Kategorien, Teilen, Support, Datenschutz, Impressum, PIN-Sperre)
 - `src/lib/store.tsx` – Zustand, wird im Browser (`localStorage`) gespeichert; keine Server-Anbindung
 - `src/lib/goals.ts` – Auswertung der Ziele (erreicht / in Bearbeitung / nicht erreicht)
 - `src/lib/de.ts`, `fr.ts`, `it.ts` – Texte
@@ -21,5 +21,5 @@ npm test         # Tests der Zielberechnung
 
 ## Hinweise für Tests
 
-- Beim ersten Start werden Beispieldaten geladen. Unter «Mehr > Prototyp» lassen sie sich neu laden oder alle Daten löschen.
+- Beim ersten Start werden Beispieldaten geladen. Unter «Profil > Prototyp» lassen sie sich neu laden oder alle Daten löschen.
 - Die Freigabe an Fachpersonen, Push-Nachrichten und Erinnerungen sind simuliert (Hinweise im Tagebuch statt echter Benachrichtigungen).

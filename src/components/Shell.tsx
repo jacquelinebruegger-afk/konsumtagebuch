@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useI18n } from '../lib/i18n'
-import { IconBook, IconDots, IconTarget } from './Icons'
+import { IconBook, IconTarget, IconUser } from './Icons'
 
 const TABS = [
   { to: '/tagebuch', key: 'nav.diary', Icon: IconBook },
   { to: '/ziele', key: 'nav.goals', Icon: IconTarget },
-  { to: '/mehr', key: 'nav.more', Icon: IconDots },
+  { to: '/mehr', key: 'nav.more', Icon: IconUser },
 ] as const
 
 const ROOTS = new Set(['/tagebuch', '/ziele', '/mehr'])

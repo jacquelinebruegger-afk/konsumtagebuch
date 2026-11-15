@@ -5,7 +5,7 @@ Web-App für Menschen mit einer Sucht, die ihren Konsum dokumentieren. Es ist ei
 
 ## Vorgaben aus dem Briefing
 - Inhalte und Screens gemäss Kundenbriefing «260827_Inhalte_Konsumtagebuch(2).docx» (Tagebuch, Einstellungen, Ziele, Tagebuch teilen, Unterstützung, Impressum, Datenschutz).
-- Flow: 3 Tabs (Tagebuch, Ziele, Mehr), jederzeit erreichbar. Eintrag erfassen in 3 Schritten (Kategorie, Details, Befinden).
+- Flow: 3 Tabs (Tagebuch, Ziele, Profil), jederzeit erreichbar. Eintrag erfassen in 3 Schritten (Kategorie, Details, Befinden).
 - Design orientiert sich an https://www.safezone.ch/de/ (Türkis, dunkle Schrift, helle Flächen, Serifen für Titel).
 - Barrierefreiheit hat Vorrang vor dem exakten SafeZone-Look (Kontraste mindestens WCAG AA).
 - Responsive: Mobile (Tab-Leiste unten) und Desktop (Seitenleiste, Tagebuch als Liste mit Detail).

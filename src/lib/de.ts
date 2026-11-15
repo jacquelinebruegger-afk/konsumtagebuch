@@ -5,7 +5,7 @@ export const de = {
   'nav.skip': 'Zum Inhalt springen',
   'nav.diary': 'Tagebuch',
   'nav.goals': 'Ziele',
-  'nav.more': 'Mehr',
+  'nav.more': 'Profil',
 
   'common.back': 'Zurück',
   'common.close': 'Schliessen',
@@ -255,7 +255,7 @@ export const de = {
   'goalForm.rangeError': 'Das Enddatum muss nach dem Startdatum liegen.',
   'goalForm.noCategory': 'Bitte legen Sie zuerst eine Kategorie an.',
 
-  'more.title': 'Mehr',
+  'more.title': 'Profil',
   'more.diary': 'Tagebuch',
   'more.settings': 'Einstellungen',
   'more.info': 'Informationen',
