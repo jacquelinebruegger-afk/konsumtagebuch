@@ -139,6 +139,8 @@ export const fr: Record<Key, string> = {
   'new.search': 'Rechercher une catégorie …',
   'new.searchLabel': 'Rechercher une catégorie',
   'new.noResults': 'Aucune catégorie correspondante.',
+  'new.recent': 'Catégories récemment saisies',
+  'new.all': 'Toutes les catégories',
   'new.addCategory': 'Ajouter une catégorie',
   'new.date': 'Date',
   'new.amount': 'Nombre d’unités',

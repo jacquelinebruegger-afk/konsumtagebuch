@@ -137,6 +137,8 @@ export const de = {
   'new.search': 'Kategorie suchen …',
   'new.searchLabel': 'Kategorie suchen',
   'new.noResults': 'Keine passende Kategorie gefunden.',
+  'new.recent': 'Zuletzt erfasste Kategorien',
+  'new.all': 'Alle Kategorien',
   'new.addCategory': 'Kategorie hinzufügen',
   'new.date': 'Datum',
   'new.amount': 'Anzahl Einheiten',

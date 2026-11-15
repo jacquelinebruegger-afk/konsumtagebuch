@@ -16,10 +16,25 @@ const FEELINGS = ['craving', 'tension', 'mood', 'pain'] as const
 function useSortedCategories() {
   const { data } = useStore()
   const { catName, lang } = useI18n()
-  return useMemo(
-    () => [...data.categories].sort((a, b) => catName(a).localeCompare(catName(b), lang)),
-    [data.categories, catName, lang],
-  )
+  return useMemo(() => [...data.categories].sort((a, b) => catName(a).localeCompare(catName(b), lang)), [data.categories, catName, lang])
+}
+
+const RECENT_MAX = 6
+
+/** Zuletzt verwendete Kategorien (jüngster Eintrag zuerst), höchstens RECENT_MAX. */
+function useRecentCategories(categories: Category[]) {
+  const { data } = useStore()
+  return useMemo(() => {
+    const last = new Map<string, string>()
+    for (const e of data.entries) {
+      const prev = last.get(e.categoryId)
+      if (!prev || e.at > prev) last.set(e.categoryId, e.at)
+    }
+    return categories
+      .filter((c) => last.has(c.id))
+      .sort((a, b) => (last.get(b.id) as string).localeCompare(last.get(a.id) as string))
+      .slice(0, RECENT_MAX)
+  }, [categories, data.entries])
 }
 
 function StepLabel({ n }: { n: 1 | 2 | 3 }) {
@@ -34,7 +49,9 @@ export function WizardCategory() {
   const navigate = useNavigate()
   const goBack = useGoBack('/tagebuch')
   const categories = useSortedCategories()
+  const recent = useRecentCategories(categories)
   const [query, setQuery] = useState('')
+  const searching = query.trim() !== ''
 
   const filtered = categories.filter((c) => catName(c).toLowerCase().includes(query.trim().toLowerCase()))
 
@@ -71,6 +88,33 @@ export function WizardCategory() {
             autoComplete="off"
           />
         </div>
+        {!searching && recent.length > 0 && (
+          <section aria-labelledby="recent-title">
+            <h2 id="recent-title" className="eyebrow">
+              {t('new.recent')}
+            </h2>
+            <ul className="tiles">
+              {recent.map((c) => (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    className={`tile${draft.categoryId === c.id ? ' is-selected' : ''}`}
+                    onClick={() => choose(c)}
+                    aria-pressed={draft.categoryId === c.id}
+                  >
+                    <Badge category={c} size="lg" />
+                    <span className="tile__name">{catName(c)}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+        {!searching && recent.length > 0 && (
+          <h2 id="all-title" className="eyebrow">
+            {t('new.all')}
+          </h2>
+        )}
         <ul className="tiles">
           {filtered.map((c) => (
             <li key={c.id}>
@@ -148,16 +192,16 @@ export function WizardDetails() {
           />
         ) : (
           <>
-        <AmountFields
-          cat={cat}
-          amount={draft.amount}
-          unitIdx={draft.unitIdx}
-          spend={draft.spend}
-          onAmount={(n) => patch({ amount: n })}
-          onUnit={(i) => patch({ unitIdx: i })}
-          onSpend={(n) => patch({ spend: n })}
-          error={tried && amountErr ? t('new.amountError') : undefined}
-        />
+            <AmountFields
+              cat={cat}
+              amount={draft.amount}
+              unitIdx={draft.unitIdx}
+              spend={draft.spend}
+              onAmount={(n) => patch({ amount: n })}
+              onUnit={(i) => patch({ unitIdx: i })}
+              onSpend={(n) => patch({ spend: n })}
+              error={tried && amountErr ? t('new.amountError') : undefined}
+            />
           </>
         )}
 
@@ -297,7 +341,10 @@ export function WizardFeeling() {
       navigate('/neu/kategorie', { replace: true })
     } else {
       reset()
-      navigate('/tagebuch', { replace: true, state: { expandDay: toDateStr(new Date(entry.at)) } })
+      navigate('/tagebuch', {
+        replace: true,
+        state: { expandDay: toDateStr(new Date(entry.at)) },
+      })
     }
   }
 
@@ -421,12 +468,7 @@ export function EntryEdit() {
         />
         <Field label={t('entry.category')} htmlFor="cat">
           <div className="select-wrap">
-            <select
-              id="cat"
-              className="select"
-              value={form.categoryId}
-              onChange={(e) => patch({ categoryId: e.target.value, unitIdx: 0 })}
-            >
+            <select id="cat" className="select" value={form.categoryId} onChange={(e) => patch({ categoryId: e.target.value, unitIdx: 0 })}>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {catName(c)}
@@ -447,16 +489,16 @@ export function EntryEdit() {
           />
         ) : (
           <>
-        <AmountFields
-          cat={cat}
-          amount={form.amount}
-          unitIdx={form.unitIdx}
-          spend={form.spend}
-          onAmount={(n) => patch({ amount: n })}
-          onUnit={(i) => patch({ unitIdx: i })}
-          onSpend={(n) => patch({ spend: n })}
-          error={tried && amountErr ? t('new.amountError') : undefined}
-        />
+            <AmountFields
+              cat={cat}
+              amount={form.amount}
+              unitIdx={form.unitIdx}
+              spend={form.spend}
+              onAmount={(n) => patch({ amount: n })}
+              onUnit={(i) => patch({ unitIdx: i })}
+              onSpend={(n) => patch({ spend: n })}
+              error={tried && amountErr ? t('new.amountError') : undefined}
+            />
           </>
         )}
 
@@ -475,7 +517,14 @@ export function EntryEdit() {
           <input id="ctx" className="input" value={form.context} onChange={(e) => patch({ context: e.target.value })} maxLength={120} />
         </Field>
         <Field label={t('new.notes')} htmlFor="notes" optional>
-          <textarea id="notes" className="input textarea" rows={3} value={form.notes} onChange={(e) => patch({ notes: e.target.value })} maxLength={500} />
+          <textarea
+            id="notes"
+            className="input textarea"
+            rows={3}
+            value={form.notes}
+            onChange={(e) => patch({ notes: e.target.value })}
+            maxLength={500}
+          />
         </Field>
       </div>
       <div className="actions">
