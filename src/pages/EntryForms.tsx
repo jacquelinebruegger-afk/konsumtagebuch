@@ -261,11 +261,16 @@ export function AmountFields({
   return (
     <>
       {units.length > 1 && (
-        <Field label={t('new.unit')} htmlFor="unit">
+        <Field
+          label={t('new.unit')}
+          htmlFor="unit"
+          hint={rawUnits.includes('@bump') ? `${unitLabel('@bump')} (${t('unit.bump.hint')})` : undefined}
+        >
           <div className="select-wrap">
             <select
               id="unit"
               className="select"
+              aria-describedby={rawUnits.includes('@bump') ? 'unit-hint' : undefined}
               value={idx}
               onChange={(e) => {
                 onUnit(Number(e.target.value))
