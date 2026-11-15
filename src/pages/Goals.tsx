@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { IconCheck, IconChevronDown, IconChevronRight, IconClock, IconCross, IconPlus, IconTarget } from '../components/Icons'
+import { CategoryPicker } from '../components/CategoryPicker'
 import { Badge, ConfirmDialog, Field, Stepper, Switch, TopBar, useGoBack, useToast } from '../components/ui'
 import { hasSpend, unitStep } from '../lib/catalog'
 import { addDays, diffDays, fmtDayFull, fmtDayShort, fmtNumber, monthRange, toDateStr, weekRange } from '../lib/dates'
@@ -185,8 +186,30 @@ interface Limit {
   val: number
 }
 
+function GoalStepLabel({ n }: { n: 1 | 2 }) {
+  const { t } = useI18n()
+  const name = t(n === 1 ? 'goalForm.step.category' : 'goalForm.step.goal')
+  return <p className="eyebrow eyebrow--first">{t('goalForm.step', { n, name })}</p>
+}
+
+/** Neues Ziel, Schritt 1: Kategorie wählen. */
+export function GoalCategory() {
+  const { t } = useI18n()
+  const navigate = useNavigate()
+  const goBack = useGoBack('/ziele')
+  return (
+    <div className="screen">
+      <TopBar title={t('goalForm.title')} left="back" onLeft={goBack} />
+      <div className="content">
+        <GoalStepLabel n={1} />
+        <CategoryPicker onChoose={(c) => navigate(`/ziele/neu/${c.id}`, { replace: true })} addCategoryState={{ fromGoal: true }} />
+      </div>
+    </div>
+  )
+}
+
 export function GoalForm() {
-  const { id } = useParams()
+  const { id, categoryId: newCategoryId } = useParams()
   const { t, catName, catUnitsRaw, unitLabel, lang } = useI18n()
   const { data, addGoal, updateGoal, deleteGoal } = useStore()
   const navigate = useNavigate()
@@ -205,27 +228,32 @@ export function GoalForm() {
     const raw = catUnitsRaw(cat)[0]
     const money = raw === '@chf'
     return {
-      day: { on: !money, val: Math.max(1, unitStep(raw)) } as Limit,
-      per: { on: !money, val: Math.max(1, unitStep(raw)) * 7 } as Limit,
+      day: { on: !money, val: 0 } as Limit,
+      per: { on: !money, val: 0 } as Limit,
       free: { on: true, val: 2 } as Limit,
       spend: { on: money || (!!cat && hasSpend(cat)), val: 100 } as Limit,
     }
   }
 
-  const [categoryId, setCategoryId] = useState(existing?.categoryId ?? categories[0]?.id ?? '')
+  const [categoryId, setCategoryId] = useState(existing?.categoryId ?? newCategoryId ?? '')
   const [period, setPeriod] = useState<GoalPeriod>(existing?.period ?? 'week')
   const [range, setRange] = useState<{ start: string; end: string }>(
     existing ? { start: existing.start, end: existing.end } : { start: weekRange(today)[0], end: weekRange(today)[1] },
   )
   const initial = defaultsFor(categoryId)
-  const [day, setDay] = useState<Limit>(existing ? { on: existing.maxPerDay != null, val: existing.maxPerDay ?? initial.day.val } : initial.day)
-  const [per, setPer] = useState<Limit>(existing ? { on: existing.maxPerPeriod != null, val: existing.maxPerPeriod ?? initial.per.val } : initial.per)
+  const [day, setDay] = useState<Limit>(
+    existing ? { on: existing.maxPerDay != null, val: existing.maxPerDay ?? initial.day.val } : initial.day,
+  )
+  const [per, setPer] = useState<Limit>(
+    existing ? { on: existing.maxPerPeriod != null, val: existing.maxPerPeriod ?? initial.per.val } : initial.per,
+  )
   const [free, setFree] = useState<Limit>(existing ? { on: existing.freeDays != null, val: existing.freeDays ?? 2 } : initial.free)
   const [spend, setSpend] = useState<Limit>(existing ? { on: existing.maxSpend != null, val: existing.maxSpend ?? 100 } : initial.spend)
   const [tried, setTried] = useState(false)
   const [confirm, setConfirm] = useState(false)
 
   if (id && !existing) return <Navigate to="/ziele" replace />
+  if (!id && !data.categories.some((c) => c.id === newCategoryId)) return <Navigate to="/ziele/neu" replace />
 
   const cat = data.categories.find((c) => c.id === categoryId)
   if (!cat) {
@@ -305,28 +333,43 @@ export function GoalForm() {
         </span>
         <Switch checked={limit.on} onChange={(on) => set({ ...limit, on })} labelledBy={`lim-${key}`} />
       </div>
-      {limit.on && (
-        <Stepper value={limit.val} onChange={(val) => set({ ...limit, val })} label={label} {...stepperProps} />
-      )}
+      {limit.on && <Stepper value={limit.val} onChange={(val) => set({ ...limit, val })} label={label} {...stepperProps} />}
     </div>
   )
 
   return (
     <div className="screen">
-      <TopBar title={existing ? t('goals.edit') : t('goalForm.title')} left="back" onLeft={goBack} />
+      <TopBar
+        title={existing ? t('goals.edit') : t('goalForm.title')}
+        left="back"
+        onLeft={existing ? goBack : () => navigate('/ziele/neu', { replace: true })}
+      />
       <div className="content">
-        <Field label={t('goalForm.category')} htmlFor="goal-cat">
-          <div className="select-wrap">
-            <select id="goal-cat" className="select" value={categoryId} onChange={(e) => pickCategory(e.target.value)}>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {catName(c)}
-                </option>
-              ))}
-            </select>
-            <IconChevronDown size={20} />
+        {!existing && <GoalStepLabel n={2} />}
+        {!existing && (
+          <div className="chosen">
+            <Badge category={cat} />
+            <span className="chosen__name">{catName(cat)}</span>
+            <Link to="/ziele/neu" replace className="chosen__change">
+              {t('common.change')}
+              <span className="sr-only">: {t('new.changeCategory')}</span>
+            </Link>
           </div>
-        </Field>
+        )}
+        {existing && (
+          <Field label={t('goalForm.category')} htmlFor="goal-cat">
+            <div className="select-wrap">
+              <select id="goal-cat" className="select" value={categoryId} onChange={(e) => pickCategory(e.target.value)}>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {catName(c)}
+                  </option>
+                ))}
+              </select>
+              <IconChevronDown size={20} />
+            </div>
+          </Field>
+        )}
 
         <div className="field">
           <span id="period-label" className="field__label">
@@ -352,17 +395,31 @@ export function GoalForm() {
           {period === 'custom' && (
             <div className="row2">
               <Field label={t('goalForm.from')} htmlFor="g-from">
-                <input id="g-from" type="date" className="input" value={range.start} onChange={(e) => setRange((r) => ({ ...r, start: e.target.value }))} lang={lang} />
+                <input
+                  id="g-from"
+                  type="date"
+                  className="input"
+                  value={range.start}
+                  onChange={(e) => setRange((r) => ({ ...r, start: e.target.value }))}
+                  lang={lang}
+                />
               </Field>
               <Field label={t('goalForm.to')} htmlFor="g-to" error={tried && rangeErr ? t('goalForm.rangeError') : undefined}>
-                <input id="g-to" type="date" className="input" value={range.end} min={range.start} onChange={(e) => setRange((r) => ({ ...r, end: e.target.value }))} lang={lang} />
+                <input
+                  id="g-to"
+                  type="date"
+                  className="input"
+                  value={range.end}
+                  min={range.start}
+                  onChange={(e) => setRange((r) => ({ ...r, end: e.target.value }))}
+                  lang={lang}
+                />
               </Field>
             </div>
           )}
         </div>
 
-        {showUnitRows &&
-          limitRow('day', t('goalForm.maxPerDay'), day, setDay, { step: unitStep(rawUnit), min: 0, suffix: unit })}
+        {showUnitRows && limitRow('day', t('goalForm.maxPerDay'), day, setDay, { step: unitStep(rawUnit), min: 0, suffix: unit })}
         {showUnitRows &&
           limitRow('per', t(`goalForm.max${periodKey}` as Key), per, setPer, { step: unitStep(rawUnit), min: 0, suffix: unit })}
         {limitRow('free', t(`goalForm.free${periodKey}` as Key), free, setFree, {
@@ -371,8 +428,7 @@ export function GoalForm() {
           max: days,
           suffix: free.val === 1 ? t('goalForm.day') : t('goalForm.days', { n: free.val }),
         })}
-        {showSpend &&
-          limitRow('spend', t('goalForm.maxSpend'), spend, setSpend, { step: 10, min: 0, suffix: t('common.chf') })}
+        {showSpend && limitRow('spend', t('goalForm.maxSpend'), spend, setSpend, { step: 10, min: 0, suffix: t('common.chf') })}
 
         {showSpend && <p className="infobox">{t('goalForm.spendInfo')}</p>}
         {tried && !anyLimit && (

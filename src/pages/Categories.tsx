@@ -143,7 +143,9 @@ export function CategoryForm() {
   const existing = id ? data.categories.find((c) => c.id === id) : undefined
   const templateKey = params.get('vorlage') ?? undefined
   const template = catalogItem(templateKey)
-  const fromWizard = (location.state as { fromWizard?: boolean } | null)?.fromWizard
+  const fromState = location.state as { fromWizard?: boolean; fromGoal?: boolean } | null
+  const fromWizard = fromState?.fromWizard
+  const fromGoal = fromState?.fromGoal
 
   const base: Category | undefined = existing ?? (template ? { id: '', key: template.key } : undefined)
   const [name, setName] = useState(base ? catName(base) : '')
@@ -182,6 +184,8 @@ export function CategoryForm() {
       if (fromWizard) {
         patch({ categoryId: created.id, unitIdx: 0, amount: 1 })
         navigate('/neu/details', { replace: true })
+      } else if (fromGoal) {
+        navigate(`/ziele/neu/${created.id}`, { replace: true })
       } else {
         goBack()
       }

@@ -8,7 +8,7 @@ import { StoreProvider, useStore } from './lib/store'
 import { CategoriesManage, CategoryCatalog, CategoryForm } from './pages/Categories'
 import { DiaryEmptyDetail, DiaryLayout, EntryDetail } from './pages/Diary'
 import { EntryEdit, WizardCategory, WizardDetails, WizardFeeling } from './pages/EntryForms'
-import { GoalForm, GoalsPage } from './pages/Goals'
+import { GoalCategory, GoalForm, GoalsPage } from './pages/Goals'
 import { HomePage } from './pages/Home'
 import { ImprintPage, LockScreen, MorePage, PrivacyPage, SharePage, SupportPage } from './pages/More'
 
@@ -34,7 +34,8 @@ function Gate() {
             <Route path="befinden" element={<WizardFeeling />} />
           </Route>
           <Route path="ziele" element={<GoalsPage />} />
-          <Route path="ziele/neu" element={<GoalForm />} />
+          <Route path="ziele/neu" element={<GoalCategory />} />
+          <Route path="ziele/neu/:categoryId" element={<GoalForm />} />
           <Route path="ziele/:id" element={<GoalForm />} />
           <Route path="mehr" element={<MorePage />} />
           <Route path="mehr/kategorien" element={<CategoriesManage />} />

@@ -260,6 +260,9 @@ export const it: Record<Key, string> = {
   'goals.open': 'Apri l’obiettivo «{name}»',
 
   'goalForm.title': 'Nuovo obiettivo',
+  'goalForm.step': 'Passo {n} di 2 · {name}',
+  'goalForm.step.category': 'Categoria',
+  'goalForm.step.goal': 'Definire l’obiettivo',
   'goalForm.category': 'Categoria',
   'goalForm.period': 'Periodo',
   'goalForm.thisWeek': 'Questa settimana',

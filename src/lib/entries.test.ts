@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { dayPart, dayPartInFuture } from './dates'
-import { dailyGoalOnTrackToday } from './goals'
+import { dailyGoalOnTrackToday, evaluateGoal } from './goals'
 import { legacyProducts, productSet, productTotal, setProductCount, sortProducts } from './catalog'
 
 describe('Alkohol: Standardgetränke', () => {
@@ -71,5 +71,19 @@ describe('Startseite: Tagesziel heute', () => {
   it('meldet nichts, wenn das Tagesziel überschritten ist oder nicht gilt', () => {
     expect(dailyGoalOnTrackToday([goal], [entry(3)], '2026-11-15')).toBeUndefined()
     expect(dailyGoalOnTrackToday([goal], [], '2026-11-16')).toBeUndefined()
+  })
+
+  it('Höchstwert 0: ohne Eintrag im Rahmen, mit Eintrag überschritten', () => {
+    const zero = { ...goal, maxPerDay: 0, maxPerPeriod: 0 }
+    const none = evaluateGoal(zero, [], '2026-11-15', () => 0)
+    expect(none.rows.map((r) => [r.status, r.ratio])).toEqual([
+      ['progress', 0],
+      ['progress', 0],
+    ])
+    const one = evaluateGoal(zero, [entry(1)], '2026-11-15', () => 0)
+    expect(one.rows.map((r) => [r.status, r.ratio])).toEqual([
+      ['failed', 1],
+      ['failed', 1],
+    ])
   })
 })

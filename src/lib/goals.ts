@@ -18,6 +18,9 @@ export interface GoalResult {
   rows: GoalRow[]
 }
 
+/** Anteil am Höchstwert (0 bis 1). Bei Höchstwert 0 gilt: 0 verbraucht, sobald etwas erfasst ist, voll. */
+const ratioOf = (value: number, max: number) => (max > 0 ? clamp(value / max) : value > 0 ? 1 : 0)
+
 export const entryDay = (e: Entry) => toDateStr(new Date(e.at))
 
 export function spendOf(e: Entry, cat: Category | undefined, unitRaw: string | undefined): number {
@@ -46,13 +49,13 @@ export function evaluateGoal(
     for (const e of inRange) perDay.set(entryDay(e), (perDay.get(entryDay(e)) ?? 0) + e.amount)
     const worst = Math.max(0, ...perDay.values())
     const status: GoalStatus = worst > goal.maxPerDay ? 'failed' : ended ? 'achieved' : 'progress'
-    rows.push({ kind: 'perDay', status, value: worst, target: goal.maxPerDay, ratio: clamp(worst / goal.maxPerDay) })
+    rows.push({ kind: 'perDay', status, value: worst, target: goal.maxPerDay, ratio: ratioOf(worst, goal.maxPerDay) })
   }
 
   if (goal.maxPerPeriod != null) {
     const total = inRange.reduce((s, e) => s + e.amount, 0)
     const status: GoalStatus = total > goal.maxPerPeriod ? 'failed' : ended ? 'achieved' : 'progress'
-    rows.push({ kind: 'perPeriod', status, value: total, target: goal.maxPerPeriod, ratio: clamp(total / goal.maxPerPeriod) })
+    rows.push({ kind: 'perPeriod', status, value: total, target: goal.maxPerPeriod, ratio: ratioOf(total, goal.maxPerPeriod) })
   }
 
   if (goal.freeDays != null) {
@@ -72,7 +75,7 @@ export function evaluateGoal(
   if (goal.maxSpend != null) {
     const total = inRange.reduce((s, e) => s + spendFn(e), 0)
     const status: GoalStatus = total > goal.maxSpend ? 'failed' : ended ? 'achieved' : 'progress'
-    rows.push({ kind: 'spend', status, value: total, target: goal.maxSpend, ratio: clamp(total / goal.maxSpend) })
+    rows.push({ kind: 'spend', status, value: total, target: goal.maxSpend, ratio: ratioOf(total, goal.maxSpend) })
   }
 
   return { goal, ended, rows }

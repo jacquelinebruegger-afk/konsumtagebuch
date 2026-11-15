@@ -258,6 +258,9 @@ export const de = {
   'goals.open': 'Ziel «{name}» öffnen',
 
   'goalForm.title': 'Neues Ziel',
+  'goalForm.step': 'Schritt {n} von 2 · {name}',
+  'goalForm.step.category': 'Kategorie',
+  'goalForm.step.goal': 'Ziel festlegen',
   'goalForm.category': 'Kategorie',
   'goalForm.period': 'Zeitraum',
   'goalForm.thisWeek': 'Diese Woche',
