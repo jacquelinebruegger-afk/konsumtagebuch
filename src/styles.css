@@ -274,7 +274,7 @@ a {
   border: 0;
   border-radius: var(--radius);
   background: transparent;
-  color: var(--ink);
+  color: var(--primary);
   text-decoration: none;
 }
 .icon-btn:hover {
@@ -290,7 +290,7 @@ a {
   width: 44px;
   height: 44px;
   border: 1.5px solid var(--line-strong);
-  color: var(--ink);
+  color: var(--primary);
   background: var(--surface);
 }
 .icon-btn--danger {
@@ -310,7 +310,7 @@ a {
   border: 0;
   border-radius: var(--radius);
   background: transparent;
-  color: var(--ink);
+  color: var(--primary);
   font-weight: 600;
   font-size: 1rem;
   white-space: nowrap;
@@ -965,7 +965,7 @@ a {
 }
 .entry__chev {
   flex: none;
-  color: var(--muted);
+  color: var(--primary);
 }
 
 .entry-head {
@@ -1431,7 +1431,7 @@ a {
 }
 .card__chev {
   flex: none;
-  color: var(--muted);
+  color: var(--primary);
 }
 .card__foot {
   border-top: 1px solid var(--line);
@@ -1535,7 +1535,7 @@ a.listrow:hover {
   background: var(--bg);
 }
 .listrow__chev {
-  color: var(--muted);
+  color: var(--primary);
 }
 .listrow--static {
   border: 0;
@@ -1737,16 +1737,31 @@ body:has(dialog[open]) {
   flex-direction: column;
   max-height: calc(100dvh - 32px);
 }
-.modal__head {
+.dlghead {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 18px 12px 0 20px;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 8px 12px 0 20px;
 }
-.modal__title {
-  font-size: 1.25rem;
-  padding-top: 8px;
+.dlghead__action {
+  align-self: flex-end;
+}
+.dlghead__title {
+  padding: 0 8px 8px 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+.sheet .dlghead {
+  border-top: 4px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.sheet .dlghead__title {
+  padding-bottom: 8px;
 }
 .modal__content {
   padding: 12px 20px;

@@ -214,6 +214,36 @@ export function ScoreBar({ label, value }: { label: string; value: number }) {
   )
 }
 
+/** Kopf für Dialoge und Overlays: Aktion oben rechts, Titel darunter linksbündig über die ganze Breite. */
+function DialogHead({
+  title,
+  titleId,
+  onAction,
+  actionLabel,
+  actionIcon,
+  level,
+}: {
+  title: string
+  titleId: string
+  onAction: () => void
+  actionLabel: string
+  actionIcon: ReactNode
+  level: 1 | 2
+}) {
+  const Heading = level === 1 ? 'h1' : 'h2'
+  return (
+    <div className="dlghead">
+      <button type="button" className="labelbtn dlghead__action" onClick={onAction}>
+        {actionIcon}
+        <span>{actionLabel}</span>
+      </button>
+      <Heading id={titleId} className="dlghead__title">
+        {title}
+      </Heading>
+    </div>
+  )
+}
+
 export function Modal({
   open,
   onClose,
@@ -255,15 +285,14 @@ export function Modal({
     >
       {open && (
         <div className="modal__body">
-          <div className="modal__head">
-            <h2 id={titleId} className="modal__title">
-              {title}
-            </h2>
-            <button type="button" className="labelbtn" onClick={onClose}>
-              {dismissIcon ?? <IconClose />}
-              <span>{dismissLabel ?? t('common.close')}</span>
-            </button>
-          </div>
+          <DialogHead
+            title={title}
+            titleId={titleId}
+            onAction={onClose}
+            actionLabel={dismissLabel ?? t('common.close')}
+            actionIcon={dismissIcon ?? <IconClose />}
+            level={2}
+          />
           <div className="modal__content">{children}</div>
           {actions && <div className="modal__actions">{actions}</div>}
         </div>
@@ -315,16 +344,7 @@ export function Sheet({
       }}
     >
       <div className="sheet__inner">
-        <TopBar
-          title={title}
-          titleId={titleId}
-          right={
-            <button type="button" className="labelbtn" onClick={onClose}>
-              <IconClose />
-              <span>{t('common.close')}</span>
-            </button>
-          }
-        />
+        <DialogHead title={title} titleId={titleId} onAction={onClose} actionLabel={t('common.close')} actionIcon={<IconClose />} level={1} />
         <div className="sheet__scroll">{children}</div>
         {actions && <div className="actions">{actions}</div>}
       </div>
