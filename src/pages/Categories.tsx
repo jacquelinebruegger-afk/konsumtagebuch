@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { CategoryIcon } from '../components/CategoryIcon'
 import { IconPencil, IconPlus, IconTrash } from '../components/Icons'
 import { Badge, ConfirmDialog, Field, TopBar, useGoBack, useToast } from '../components/ui'
 import { CATALOG, catalogItem, hasSpend } from '../lib/catalog'
@@ -98,8 +99,8 @@ export function CategoryCatalog() {
           {available.map((item) => (
             <li key={item.key}>
               <button type="button" className="tile" onClick={() => go(`?vorlage=${item.key}`)}>
-                <span className="badge badge--lg" aria-hidden="true">
-                  {item.abbr}
+                <span className="badge badge--lg badge--icon" aria-hidden="true">
+                  <CategoryIcon name={item.key} size={44} />
                 </span>
                 <span className="tile__name">{t(`cat.${item.key}` as Key)}</span>
               </button>
@@ -107,8 +108,8 @@ export function CategoryCatalog() {
           ))}
           <li>
             <button type="button" className="tile tile--add" onClick={() => go('')}>
-              <span className="badge badge--lg badge--add" aria-hidden="true">
-                <IconPlus size={22} />
+              <span className="badge badge--lg badge--icon" aria-hidden="true">
+                <CategoryIcon name="other" size={44} />
               </span>
               <span className="tile__name">{t('cat.other')}</span>
               <span className="tile__hint">{t('cat.otherHint')}</span>
