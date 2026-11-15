@@ -198,7 +198,7 @@ export function WizardDetails() {
               unitIdx={draft.unitIdx}
               spend={draft.spend}
               onAmount={(n) => patch({ amount: n })}
-              onUnit={(i) => patch({ unitIdx: i })}
+              onUnit={(i, a) => patch({ unitIdx: i, amount: a })}
               onSpend={(n) => patch({ spend: n })}
               error={tried && amountErr ? t('new.amountError') : undefined}
             />
@@ -247,7 +247,8 @@ export function AmountFields({
   unitIdx: number
   spend: number
   onAmount: (n: number) => void
-  onUnit: (i: number) => void
+  /** Neue Einheit und passender Startwert des Zählers (z. B. 1 für Line, 10 für Milligramm). */
+  onUnit: (i: number, startAmount: number) => void
   onSpend: (n: number) => void
   error?: string
 }) {
@@ -261,24 +262,20 @@ export function AmountFields({
   return (
     <>
       {units.length > 1 && (
-        <Field
-          label={t('new.unit')}
-          htmlFor="unit"
-          hint={rawUnits.includes('@bump') ? `${unitLabel('@bump')} (${t('unit.bump.hint')})` : undefined}
-        >
+        <Field label={t('new.unit')} htmlFor="unit">
           <div className="select-wrap">
             <select
               id="unit"
               className="select"
-              aria-describedby={rawUnits.includes('@bump') ? 'unit-hint' : undefined}
               value={idx}
               onChange={(e) => {
-                onUnit(Number(e.target.value))
+                const i = Number(e.target.value)
+                onUnit(i, unitStep(rawUnits[i]))
               }}
             >
               {units.map((u, i) => (
                 <option key={i} value={i}>
-                  {u}
+                  {rawUnits[i] === '@bump' ? `${u} (${t('unit.bump.hint')})` : u}
                 </option>
               ))}
             </select>
@@ -500,7 +497,7 @@ export function EntryEdit() {
               unitIdx={form.unitIdx}
               spend={form.spend}
               onAmount={(n) => patch({ amount: n })}
-              onUnit={(i) => patch({ unitIdx: i })}
+              onUnit={(i, a) => patch({ unitIdx: i, amount: a })}
               onSpend={(n) => patch({ spend: n })}
               error={tried && amountErr ? t('new.amountError') : undefined}
             />
