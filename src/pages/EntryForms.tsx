@@ -69,7 +69,7 @@ export function WizardCategory() {
     <div className="screen">
       <TopBar
         title={t('new.title')}
-        left="close"
+        left="back"
         onLeft={() => {
           reset()
           goBack()
@@ -459,7 +459,7 @@ export function EntryEdit() {
 
   return (
     <div className="screen">
-      <TopBar title={t('entry.edit')} left="close" onLeft={goBack} />
+      <TopBar title={t('entry.edit')} left="back" onLeft={goBack} />
       <div className="content">
         <WhenFields
           date={form.date}

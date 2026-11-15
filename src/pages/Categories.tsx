@@ -91,7 +91,7 @@ export function CategoryCatalog() {
 
   return (
     <div className="screen">
-      <TopBar title={t('cat.add')} left="close" onLeft={goBack} />
+      <TopBar title={t('cat.add')} left="back" onLeft={goBack} />
       <div className="content">
         <p className="eyebrow eyebrow--first">{t('cat.choose')}</p>
         {available.length === 0 && <p className="muted">{t('cat.allAdded')}</p>}
@@ -197,7 +197,7 @@ export function CategoryForm() {
 
   return (
     <div className="screen">
-      <TopBar title={existing ? t('cat.edit') : t('cat.new')} left="close" onLeft={goBack} />
+      <TopBar title={existing ? t('cat.edit') : t('cat.new')} left="back" onLeft={goBack} />
       <div className="content">
         <Field label={t('cat.name')} htmlFor="cat-name" error={tried ? nameErr : undefined}>
           <input

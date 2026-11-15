@@ -231,7 +231,7 @@ export function GoalForm() {
   if (!cat) {
     return (
       <div className="screen">
-        <TopBar title={t('goalForm.title')} left="close" onLeft={goBack} />
+        <TopBar title={t('goalForm.title')} left="back" onLeft={goBack} />
         <div className="content">
           <p>{t('goalForm.noCategory')}</p>
         </div>
@@ -313,7 +313,7 @@ export function GoalForm() {
 
   return (
     <div className="screen">
-      <TopBar title={existing ? t('goals.edit') : t('goalForm.title')} left="close" onLeft={goBack} />
+      <TopBar title={existing ? t('goals.edit') : t('goalForm.title')} left="back" onLeft={goBack} />
       <div className="content">
         <Field label={t('goalForm.category')} htmlFor="goal-cat">
           <div className="select-wrap">

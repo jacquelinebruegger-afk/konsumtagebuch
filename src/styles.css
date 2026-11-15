@@ -23,6 +23,8 @@
   --danger-bar: #c0392b;
   --radius: 12px;
   --tabbar-h: 68px;
+  --col-w: 560px; /* Breite der Hauptspalte auf Desktop, auf allen Seiten gleich */
+  --page-w: 1160px; /* Maximale Gesamtbreite des Arbeitsbereichs auf Desktop */
   --font-body: 'Source Sans 3 Variable', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-head: 'Roboto Slab Variable', 'Roboto Slab', Georgia, serif;
 }
@@ -1878,13 +1880,15 @@ a.listrow:hover {
   .main,
   .shell:not(.is-flow) .main {
     min-height: 100dvh;
-    padding: 32px 32px 48px;
+    /* Arbeitsbereich zentrieren: gleiche linke Kante auf allen Seiten */
+    padding: 32px max(32px, calc((100vw - 264px - var(--page-w)) / 2)) 48px;
   }
   .screen,
   .shell:not(.is-flow) .screen {
     min-height: 0;
-    max-width: 720px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: var(--col-w);
+    margin: 0;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 20px;
@@ -1927,10 +1931,10 @@ a.listrow:hover {
   }
   .split {
     display: grid;
-    grid-template-columns: minmax(380px, 460px) minmax(0, 1fr);
+    grid-template-columns: minmax(340px, 1fr) minmax(0, 1fr);
     gap: 24px;
-    max-width: 1120px;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0;
     align-items: start;
   }
   .split.has-detail .split__list,
@@ -1994,6 +1998,13 @@ a.listrow:hover {
   }
   .tile {
     font-size: 0.95rem;
+  }
+}
+
+/* Breite Desktops: Liste hat dieselbe Breite wie die Hauptspalte der anderen Seiten */
+@media (min-width: 1360px) {
+  .split {
+    grid-template-columns: var(--col-w) minmax(0, 1fr);
   }
 }
 
