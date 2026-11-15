@@ -111,7 +111,6 @@ export const de = {
   'diary.reminder1': 'Wie geht es Ihnen heute? Mögen Sie Ihr Befinden und Ihren Konsum kurz festhalten?',
   'diary.reminder2': 'Vergessen Sie nicht, Ihre Einträge im Tagebuch festzuhalten.',
   'diary.congrats': 'Herzlichen Glückwunsch! Sie haben gestern Ihr Tagesziel für die Kategorie {name} erreicht.',
-  'diary.dismiss': 'Hinweis schliessen',
   'diary.bannerLabel': 'Hinweis',
 
   'entry.title': 'Eintrag',

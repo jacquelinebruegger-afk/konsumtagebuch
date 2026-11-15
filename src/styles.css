@@ -195,7 +195,7 @@ a {
   top: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: minmax(52px, 1fr) auto minmax(52px, 1fr);
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
   align-items: center;
   gap: 8px;
   min-height: 64px;
@@ -220,6 +220,7 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  min-width: 0;
 }
 
 .content {
@@ -297,6 +298,30 @@ a {
 }
 .icon-btn--danger:hover {
   background: var(--danger-bg);
+}
+
+.labelbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 48px;
+  padding: 0 10px 0 6px;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 1rem;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.labelbtn:hover {
+  background: var(--tint);
+}
+.labelbtn--sm {
+  min-height: 44px;
+  margin-left: auto;
+  font-size: 0.95rem;
 }
 
 .btn {
@@ -809,6 +834,7 @@ a {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  flex-wrap: wrap;
   padding: 12px 8px 12px 14px;
   margin-bottom: 16px;
   border-radius: var(--radius);
@@ -820,7 +846,7 @@ a {
   color: var(--primary);
 }
 .banner p {
-  flex: 1;
+  flex: 1 1 12rem;
 }
 .banner--success {
   background: var(--success-bg);

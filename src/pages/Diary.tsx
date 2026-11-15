@@ -84,8 +84,9 @@ export function DiaryLayout() {
             <div className={`banner banner--${banner.kind}`} role="status">
               <IconInfo />
               <p>{banner.text}</p>
-              <button type="button" className="icon-btn icon-btn--sm" onClick={() => setDismissed(true)} aria-label={t('diary.dismiss')}>
+              <button type="button" className="labelbtn labelbtn--sm" onClick={() => setDismissed(true)}>
                 <IconClose size={20} />
+                <span>{t('common.close')}</span>
               </button>
             </div>
           )}

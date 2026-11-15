@@ -113,7 +113,6 @@ export const it: Record<Key, string> = {
   'diary.reminder1': 'Come sta oggi? Vuole annotare brevemente il suo stato e il suo consumo?',
   'diary.reminder2': 'Non dimentichi di compilare il suo diario.',
   'diary.congrats': 'Congratulazioni! Ieri ha raggiunto il suo obiettivo giornaliero per la categoria {name}.',
-  'diary.dismiss': 'Chiudi l’avviso',
   'diary.bannerLabel': 'Avviso',
 
   'entry.title': 'Voce',

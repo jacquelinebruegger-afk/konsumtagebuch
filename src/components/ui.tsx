@@ -41,13 +41,9 @@ export function TopBar({ title, left, onLeft, leftLabel, right, leftMobileOnly }
     <header className="topbar">
       <div className="topbar__side">
         {left && (
-          <button
-            type="button"
-            className={`icon-btn${leftMobileOnly ? ' only-mobile' : ''}`}
-            onClick={onLeft}
-            aria-label={leftLabel ?? (left === 'back' ? t('common.back') : t('common.close'))}
-          >
+          <button type="button" className={`labelbtn${leftMobileOnly ? ' only-mobile' : ''}`} onClick={onLeft}>
             {left === 'back' ? <IconBack /> : <IconClose />}
+            <span>{leftLabel ?? (left === 'back' ? t('common.back') : t('common.close'))}</span>
           </button>
         )}
       </div>
@@ -256,8 +252,9 @@ export function Modal({
             <h2 id={titleId} className="modal__title">
               {title}
             </h2>
-            <button type="button" className="icon-btn" onClick={onClose} aria-label={t('common.close')}>
+            <button type="button" className="labelbtn" onClick={onClose}>
               <IconClose />
+              <span>{t('common.close')}</span>
             </button>
           </div>
           <div className="modal__content">{children}</div>
