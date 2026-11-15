@@ -159,7 +159,7 @@ a {
   justify-content: center;
   gap: 2px;
   min-height: var(--tabbar-h);
-  color: var(--muted);
+  color: var(--primary);
   text-decoration: none;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -721,6 +721,7 @@ a {
   padding: 6px 8px;
   border: 0;
   background: var(--surface);
+  color: var(--primary);
   font-weight: 600;
   line-height: 1.2;
 }
@@ -922,6 +923,7 @@ a {
   margin-left: 0;
 }
 .chev {
+  color: var(--primary);
   transition: transform 0.15s;
 }
 .chev--open {
@@ -959,6 +961,7 @@ a {
   color: var(--muted);
 }
 .entry__amount {
+  color: var(--primary);
   font-weight: 600;
   text-align: right;
   white-space: nowrap;
@@ -1177,6 +1180,7 @@ a {
   background: var(--surface);
   border: 1.5px solid var(--line-strong);
   border-radius: var(--radius);
+  color: var(--primary);
   font-weight: 600;
 }
 .choice:hover .choice__box {
