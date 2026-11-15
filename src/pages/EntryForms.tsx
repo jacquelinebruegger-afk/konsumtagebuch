@@ -218,15 +218,6 @@ export function AmountFields({
 
   return (
     <>
-      <Field label={t('new.amount')} error={error}>
-        <Stepper
-          value={amount}
-          onChange={onAmount}
-          step={unitStep(rawUnits[idx])}
-          label={t('new.amount')}
-          suffix={t('new.unitLine', { unit })}
-        />
-      </Field>
       {units.length > 1 && (
         <Field label={t('new.unit')} htmlFor="unit">
           <div className="select-wrap">
@@ -248,6 +239,15 @@ export function AmountFields({
           </div>
         </Field>
       )}
+      <Field label={t('new.amount')} error={error}>
+        <Stepper
+          value={amount}
+          onChange={onAmount}
+          step={unitStep(rawUnits[idx])}
+          label={t('new.amount')}
+          suffix={t('new.unitLine', { unit })}
+        />
+      </Field>
       {hasSpend(cat) && !isMoney && (
         <Field label={t('new.spend')} optional>
           <Stepper value={spend} onChange={onSpend} step={5} label={t('new.spend')} suffix={t('common.chf')} />
