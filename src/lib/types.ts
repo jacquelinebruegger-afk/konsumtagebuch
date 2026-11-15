@@ -11,6 +11,18 @@ export interface Category {
   spend?: boolean
 }
 
+/** Tageszeit eines Eintrags (statt exakter Uhrzeit). */
+export type DayPart = 'morning' | 'noon' | 'afternoon' | 'evening' | 'night'
+
+/** Eine erfasste Alkoholmenge, z. B. 2 × Bier / Grosses Bier. */
+export interface Drink {
+  /** Alkoholsorte, z. B. 'beer' */
+  type: string
+  /** Einheit der Sorte, z. B. 'large' */
+  unit: string
+  count: number
+}
+
 export interface Entry {
   id: string
   categoryId: string
@@ -19,6 +31,10 @@ export interface Entry {
   amount: number
   unitIdx: number
   spend?: number
+  /** Gewählte Tageszeit; wenn gesetzt, ist `at` nur ein Richtwert und die Uhrzeit wird nicht angezeigt. */
+  dayPart?: DayPart
+  /** Alkohol: einzelne Getränke. `amount` enthält dann die Summe in Standardgetränken. */
+  drinks?: Drink[]
   context: string
   craving: number
   tension: number

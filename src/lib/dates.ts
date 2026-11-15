@@ -1,4 +1,4 @@
-import type { Lang } from './types'
+import type { DayPart, Lang } from './types'
 
 export const LOCALES: Record<Lang, string> = { de: 'de-CH', fr: 'fr-CH', it: 'it-CH' }
 
@@ -42,14 +42,41 @@ export function monthRange(ref: string): [string, string] {
   return [toDateStr(start), toDateStr(end)]
 }
 
-export type DayPart = 'morning' | 'afternoon' | 'evening' | 'night'
+export type { DayPart }
+
+/** Beginn jeder Tageszeit (Stunde). Nacht: 23–5 Uhr. */
+export const DAYPART_START: Record<DayPart, number> = { morning: 5, noon: 11, afternoon: 14, evening: 18, night: 23 }
+export const DAYPART_ORDER: DayPart[] = ['morning', 'noon', 'afternoon', 'evening', 'night']
+/** Richtwert für `at`, damit Einträge einer Tageszeit sinnvoll sortiert werden. */
+const DAYPART_ANCHOR: Record<DayPart, [number, number]> = {
+  morning: [8, 0],
+  noon: [12, 30],
+  afternoon: [16, 0],
+  evening: [20, 0],
+  night: [23, 30],
+}
 
 export function dayPart(d: Date): DayPart {
   const h = d.getHours()
-  if (h >= 6 && h < 12) return 'morning'
-  if (h >= 12 && h < 18) return 'afternoon'
+  if (h >= 5 && h < 11) return 'morning'
+  if (h >= 11 && h < 14) return 'noon'
+  if (h >= 14 && h < 18) return 'afternoon'
   if (h >= 18 && h < 23) return 'evening'
   return 'night'
+}
+
+/** Liegt der Beginn dieser Tageszeit am gewählten Tag noch in der Zukunft? */
+export function dayPartInFuture(dateStr: string, part: DayPart, now = new Date()): boolean {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(y, m - 1, d, DAYPART_START[part]) > now
+}
+
+/** Richtwert-Zeitpunkt für eine Tageszeit (nie in der Zukunft). */
+export function atForDayPart(dateStr: string, part: DayPart, now = new Date()): string {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const [hh, mm] = DAYPART_ANCHOR[part]
+  const at = new Date(y, m - 1, d, hh, mm)
+  return (at > now ? now : at).toISOString()
 }
 
 export const fmtDayLong = (s: string, lang: Lang) =>

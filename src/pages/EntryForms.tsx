@@ -1,14 +1,18 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { IconChevronDown, IconPlus, IconSearch } from '../components/Icons'
+import { DrinkFields, WhenFields, dayPartError } from '../components/AlcoholFields'
 import { Badge, ConfirmDialog, Field, ScoreSlider, Stepper, TopBar, useGoBack, useToast } from '../components/ui'
-import { hasSpend, unitStep } from '../lib/catalog'
-import { combine, toDateStr, toTimeStr } from '../lib/dates'
+import { hasSpend, isAlcohol, standardDrinks, unitStep } from '../lib/catalog'
+import { atForDayPart, combine, dayPart as dayPartOf, toDateStr, toTimeStr } from '../lib/dates'
 import type { Key } from '../lib/de'
 import { useDraft } from '../lib/draft'
 import { useI18n } from '../lib/i18n'
 import { useStore } from '../lib/store'
-import type { Category } from '../lib/types'
+import type { Category, DayPart, Drink } from '../lib/types'
+
+/** Ältere Alkohol-Einträge ohne Getränkeliste: als Standardgetränke weiterführen. */
+const legacyDrinks = (amount: number): Drink[] => [{ type: 'other', unit: 'standard', count: Math.max(1, Math.round(amount)) }]
 
 const FEELINGS = ['craving', 'tension', 'mood', 'pain'] as const
 
@@ -38,7 +42,12 @@ export function WizardCategory() {
   const filtered = categories.filter((c) => catName(c).toLowerCase().includes(query.trim().toLowerCase()))
 
   const choose = (c: Category) => {
-    patch({ categoryId: c.id, unitIdx: 0, amount: unitStep(catUnitsRaw(c)[0]) })
+    patch({
+      categoryId: c.id,
+      unitIdx: 0,
+      amount: unitStep(catUnitsRaw(c)[0]),
+      ...(draft.categoryId === c.id ? {} : { drinkTypes: [], drinks: [] }),
+    })
     navigate('/neu/details', { replace: true })
   }
 
@@ -106,15 +115,27 @@ export function WizardDetails() {
 
   if (!cat) return <Navigate to="/neu/kategorie" replace />
 
-  const futureErr = new Date(combine(draft.date, draft.time)) > new Date()
-  const amountErr = draft.amount <= 0
-  const valid = !!draft.date && !!draft.time && !futureErr && !amountErr
+  const alcohol = isAlcohol(cat)
+  const futureErr = alcohol
+    ? dayPartError(draft.date, draft.dayPart)
+    : new Date(combine(draft.date, draft.time)) > new Date()
+  const amountErr = alcohol ? standardDrinks(draft.drinks) <= 0 : draft.amount <= 0
+  const valid = !!draft.date && (alcohol || !!draft.time) && !futureErr && !amountErr
 
   return (
     <div className="screen">
       <TopBar title={t('new.title')} left="back" onLeft={() => navigate('/neu/kategorie', { replace: true })} />
       <div className="content">
         <StepLabel n={2} />
+        {alcohol && (
+          <WhenFields
+            date={draft.date}
+            dayPart={draft.dayPart}
+            onDate={(date) => patch({ date })}
+            onDayPart={(dayPart) => patch({ dayPart })}
+            showError={tried}
+          />
+        )}
         <div className="chosen">
           <Badge category={cat} />
           <span className="chosen__name">{catName(cat)}</span>
@@ -124,6 +145,15 @@ export function WizardDetails() {
           </Link>
         </div>
 
+        {alcohol ? (
+          <DrinkFields
+            types={draft.drinkTypes}
+            drinks={draft.drinks}
+            onChange={(p) => patch(p)}
+            error={tried && amountErr ? t('new.drinksError') : undefined}
+          />
+        ) : (
+          <>
         <fieldset className="fieldset">
           <legend className="field__label">{t('new.dateTime')}</legend>
           <div className="row2">
@@ -164,6 +194,8 @@ export function WizardDetails() {
           onSpend={(n) => patch({ spend: n })}
           error={tried && amountErr ? t('new.amountError') : undefined}
         />
+          </>
+        )}
 
         <Field label={t('new.context')} htmlFor="ctx" optional>
           <input
@@ -271,17 +303,22 @@ export function WizardFeeling() {
   if (!draft.categoryId || !data.categories.some((c) => c.id === draft.categoryId)) {
     return <Navigate to="/neu/kategorie" replace />
   }
+  if (isAlcohol(data.categories.find((c) => c.id === draft.categoryId)) && standardDrinks(draft.drinks) <= 0) {
+    return <Navigate to="/neu/details" replace />
+  }
 
   const save = (another: boolean) => {
     saved.current = true
     const cat = data.categories.find((c) => c.id === draft.categoryId)!
     const spendNum = hasSpend(cat) ? draft.spend : 0
+    const alcohol = isAlcohol(cat)
     const entry = addEntry({
       categoryId: draft.categoryId!,
-      at: combine(draft.date, draft.time),
-      amount: draft.amount,
-      unitIdx: draft.unitIdx,
+      at: alcohol ? atForDayPart(draft.date, draft.dayPart) : combine(draft.date, draft.time),
+      amount: alcohol ? standardDrinks(draft.drinks) : draft.amount,
+      unitIdx: alcohol ? 0 : draft.unitIdx,
       spend: spendNum > 0 ? spendNum : undefined,
+      ...(alcohol ? { dayPart: draft.dayPart, drinks: draft.drinks } : {}),
       context: draft.context.trim(),
       craving: draft.craving,
       tension: draft.tension,
@@ -347,12 +384,16 @@ export function EntryEdit() {
   const categories = useSortedCategories()
   const entry = data.entries.find((e) => e.id === id)
 
-  const [form, setForm] = useState(() =>
-    entry
+  const [form, setForm] = useState(() => {
+    const initialDrinks: Drink[] = entry?.drinks ?? (isAlcohol(data.categories.find((c) => c.id === entry?.categoryId)) && entry ? legacyDrinks(entry.amount) : [])
+    return entry
       ? {
           categoryId: entry.categoryId,
           date: toDateStr(new Date(entry.at)),
           time: toTimeStr(new Date(entry.at)),
+          dayPart: (entry.dayPart ?? dayPartOf(new Date(entry.at))) as DayPart,
+          drinkTypes: [...new Set(initialDrinks.map((d) => d.type))],
+          drinks: initialDrinks,
           amount: entry.amount,
           unitIdx: entry.unitIdx,
           spend: entry.spend ?? 0,
@@ -363,8 +404,8 @@ export function EntryEdit() {
           pain: entry.pain,
           notes: entry.notes,
         }
-      : null,
-  )
+      : null
+  })
   const [tried, setTried] = useState(false)
   const [confirm, setConfirm] = useState(false)
 
@@ -373,19 +414,23 @@ export function EntryEdit() {
   if (!cat) return <Navigate to="/tagebuch" replace />
 
   const patch = (p: Partial<typeof form>) => setForm((f) => (f ? { ...f, ...p } : f))
-  const futureErr = new Date(combine(form.date, form.time)) > new Date()
-  const amountErr = form.amount <= 0
-  const valid = !futureErr && !amountErr && !!form.date && !!form.time
+  const alcohol = isAlcohol(cat)
+  const futureErr = alcohol ? dayPartError(form.date, form.dayPart) : new Date(combine(form.date, form.time)) > new Date()
+  const amountErr = alcohol ? standardDrinks(form.drinks) <= 0 : form.amount <= 0
+  const valid = !futureErr && !amountErr && !!form.date && (alcohol || !!form.time)
 
   const save = () => {
     setTried(true)
     if (!valid) return
+    const keepAt = toDateStr(new Date(entry.at)) === form.date && (entry.dayPart ?? dayPartOf(new Date(entry.at))) === form.dayPart
     updateEntry({
       ...entry,
       categoryId: form.categoryId,
-      at: combine(form.date, form.time),
-      amount: form.amount,
-      unitIdx: form.unitIdx,
+      at: alcohol ? (keepAt ? entry.at : atForDayPart(form.date, form.dayPart)) : combine(form.date, form.time),
+      amount: alcohol ? standardDrinks(form.drinks) : form.amount,
+      unitIdx: alcohol ? 0 : form.unitIdx,
+      dayPart: alcohol ? form.dayPart : undefined,
+      drinks: alcohol ? form.drinks : undefined,
       spend: hasSpend(cat) && form.spend > 0 ? form.spend : undefined,
       context: form.context.trim(),
       craving: form.craving,
@@ -402,6 +447,15 @@ export function EntryEdit() {
     <div className="screen">
       <TopBar title={t('entry.edit')} left="close" onLeft={goBack} />
       <div className="content">
+        {alcohol && (
+          <WhenFields
+            date={form.date}
+            dayPart={form.dayPart}
+            onDate={(date) => patch({ date })}
+            onDayPart={(dayPart) => patch({ dayPart })}
+            showError={tried}
+          />
+        )}
         <Field label={t('entry.category')} htmlFor="cat">
           <div className="select-wrap">
             <select
@@ -420,6 +474,15 @@ export function EntryEdit() {
           </div>
         </Field>
 
+        {alcohol ? (
+          <DrinkFields
+            types={form.drinkTypes}
+            drinks={form.drinks}
+            onChange={(p) => patch(p)}
+            error={tried && amountErr ? t('new.drinksError') : undefined}
+          />
+        ) : (
+          <>
         <fieldset className="fieldset">
           <legend className="field__label">{t('new.dateTime')}</legend>
           <div className="row2">
@@ -443,6 +506,8 @@ export function EntryEdit() {
           onSpend={(n) => patch({ spend: n })}
           error={tried && amountErr ? t('new.amountError') : undefined}
         />
+          </>
+        )}
 
         <h2 className="eyebrow">{t('feel.title')}</h2>
         {FEELINGS.map((f) => (
