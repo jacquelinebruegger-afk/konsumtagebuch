@@ -154,12 +154,6 @@ export function DiaryLayout() {
                                 <span className="entry__amount">
                                   {fmtNumber(e.amount, lang)} × {entryUnit(e, cat)}
                                 </span>
-                                {e.notes && (
-                                  <span className="entry__note" title={t('diary.hasNote')}>
-                                    <IconNote size={18} />
-                                    <span className="sr-only">{t('diary.hasNote')}</span>
-                                  </span>
-                                )}
                                 <IconChevronRight className="entry__chev" size={18} />
                               </Link>
                             </li>

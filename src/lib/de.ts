@@ -109,7 +109,6 @@ export const de = {
   'diary.empty.cta': 'Ersten Eintrag erfassen',
   'diary.select.title': 'Kein Eintrag ausgewählt',
   'diary.select.text': 'Wählen Sie links einen Eintrag, um die Details zu sehen.',
-  'diary.hasNote': 'Mit Notiz',
   'diary.list': 'Einträge nach Tag',
   'diary.reminder1': 'Wie geht es Ihnen heute? Mögen Sie Ihr Befinden und Ihren Konsum kurz festhalten?',
   'diary.reminder2': 'Vergessen Sie nicht, Ihre Einträge im Tagebuch festzuhalten.',

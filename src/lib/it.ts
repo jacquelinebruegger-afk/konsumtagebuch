@@ -111,7 +111,6 @@ export const it: Record<Key, string> = {
   'diary.empty.cta': 'Registra la prima voce',
   'diary.select.title': 'Nessuna voce selezionata',
   'diary.select.text': 'Scelga una voce a sinistra per vedere i dettagli.',
-  'diary.hasNote': 'Con nota',
   'diary.list': 'Voci per giorno',
   'diary.reminder1': 'Come sta oggi? Vuole annotare brevemente il suo stato e il suo consumo?',
   'diary.reminder2': 'Non dimentichi di compilare il suo diario.',

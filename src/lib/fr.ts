@@ -111,7 +111,6 @@ export const fr: Record<Key, string> = {
   'diary.empty.cta': 'Saisir la première entrée',
   'diary.select.title': 'Aucune entrée sélectionnée',
   'diary.select.text': 'Choisissez une entrée à gauche pour en voir les détails.',
-  'diary.hasNote': 'Avec note',
   'diary.list': 'Entrées par jour',
   'diary.reminder1': 'Comment allez-vous aujourd’hui ? Souhaitez-vous noter brièvement votre état et votre consommation ?',
   'diary.reminder2': 'N’oubliez pas de remplir votre journal.',

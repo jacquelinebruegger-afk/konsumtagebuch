@@ -974,10 +974,6 @@ a {
   text-align: right;
   white-space: nowrap;
 }
-.entry__note {
-  display: inline-flex;
-  color: var(--muted);
-}
 .entry__chev {
   flex: none;
   color: var(--muted);
