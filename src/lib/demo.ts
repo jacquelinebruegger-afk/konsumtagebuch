@@ -1,6 +1,6 @@
-import { CATALOG, initialCategories } from './catalog'
+import { CATALOG, initialCategories, standardDrinks } from './catalog'
 import { addDays, diffDays, monthRange, toDateStr, uid, weekRange } from './dates'
-import type { AppData, Entry, Goal, Settings } from './types'
+import type { AppData, Drink, Entry, Goal, Settings } from './types'
 
 export const defaultSettings: Settings = { lang: 'de', push: true, reminder: true }
 
@@ -32,6 +32,12 @@ const NOTES = [
   '',
 ]
 const CONTEXTS = ['Zuhause, allein', 'Bei der Arbeit', 'Unterwegs', 'Bar, mit Kollegen', 'Zuhause, mit Partner/in']
+
+/** Beispielgetränke für n Standardgetränke (abwechselnd Bier und Wein). */
+function demoDrinks(n: number, i: number): Drink[] {
+  if (n === 1) return i % 2 ? [{ type: 'wine', unit: 'dl1', count: 1 }] : [{ type: 'beer', unit: 'stange', count: 1 }]
+  return i % 2 ? [{ type: 'wine', unit: 'dl2', count: 1 }] : [{ type: 'beer', unit: 'stange', count: n }]
+}
 
 export function demoData(now = new Date()): AppData {
   const base = emptyData()
@@ -67,7 +73,10 @@ export function demoData(now = new Date()): AppData {
     const offset = diffDays(ws, day)
     const inWeek = offset >= 0
     const alcohol = inWeek ? alcoholWeek[offset] : rand() > 0.4 ? 1 + Math.floor(rand() * 2) : 0
-    if (alcohol) add(day, 19 + Math.floor(rand() * 3), Math.floor(rand() * 60), 'alcohol', alcohol)
+    if (alcohol) {
+      const drinks = demoDrinks(alcohol, i)
+      add(day, 19 + Math.floor(rand() * 3), Math.floor(rand() * 60), 'alcohol', standardDrinks(drinks), { drinks, dayPart: 'evening' })
+    }
     if (rand() > 0.15) {
       const n = inWeek && offset === 1 ? 8 : 3 + Math.floor(rand() * 3)
       add(day, 8, 10 + Math.floor(rand() * 40), 'nicotine', Math.ceil(n / 2))
