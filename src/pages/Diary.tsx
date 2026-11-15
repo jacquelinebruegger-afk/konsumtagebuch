@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Outlet, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { IconBook, IconChevronDown, IconChevronRight, IconClose, IconNote, IconPlus, IconInfo } from '../components/Icons'
-import { drinkTypesSummary, useDrinkLabels } from '../components/AlcoholFields'
-import { sortDrinks } from '../lib/catalog'
+import { productTypesSummary, useProductLabels } from '../components/ProductFields'
+import { productSet, sortProducts } from '../lib/catalog'
 import { Badge, ConfirmDialog, ScoreBar, TopBar, useToast } from '../components/ui'
 import { addDays, dayPart, fmtDayLong, fmtDayMedium, fmtNumber, fmtTime, toDateStr } from '../lib/dates'
 import { dailyGoalReachedYesterday, entryDay } from '../lib/goals'
@@ -13,7 +13,7 @@ import type { Entry } from '../lib/types'
 
 export function DiaryLayout() {
   const { t, tn, lang, catName, entryUnit } = useI18n()
-  const drinkLabels = useDrinkLabels()
+  const productLabels = useProductLabels()
   const { data } = useStore()
   const location = useLocation()
   const detailMatch = useMatch('/tagebuch/eintrag/:id')
@@ -148,7 +148,7 @@ export function DiaryLayout() {
                                   <span className="entry__name">{catName(cat)}</span>
                                   <span className="entry__time">
                                     {t(`daypart.${e.dayPart ?? dayPart(d)}` as Key)}
-                                    {e.dayPart ? (e.drinks?.length ? ` · ${drinkTypesSummary(e.drinks, drinkLabels.type)}` : '') : ` · ${fmtTime(d, lang)}`}
+                                    {e.dayPart ? (e.products?.length ? ` · ${productTypesSummary(e.products, productLabels.type)}` : '') : ` · ${fmtTime(d, lang)}`}
                                   </span>
                                 </span>
                                 <span className="entry__amount">
@@ -200,7 +200,7 @@ export function DiaryEmptyDetail() {
 export function EntryDetail() {
   const { id } = useParams()
   const { t, lang, catName, entryUnit } = useI18n()
-  const drinkLabels = useDrinkLabels()
+  const productLabels = useProductLabels()
   const { data, deleteEntry } = useStore()
   const navigate = useNavigate()
   const toast = useToast()
@@ -251,14 +251,14 @@ export function EntryDetail() {
               {fmtNumber(entry.amount, lang)} × {entryUnit(entry, cat)}
             </dd>
           </div>
-          {entry.drinks && entry.drinks.length > 0 && (
+          {entry.products && entry.products.length > 0 && (
             <div>
-              <dt>{t('entry.drinks')}</dt>
+              <dt>{t(`entry.products.${productSet(cat) ?? 'alcohol'}` as Key)}</dt>
               <dd>
-                <ul className="drinklist">
-                  {sortDrinks(entry.drinks).map((dr) => (
+                <ul className="productlist">
+                  {sortProducts(entry.products).map((dr) => (
                     <li key={`${dr.type}-${dr.unit}`}>
-                      {fmtNumber(dr.count, lang)} × {drinkLabels.type(dr.type)}, {drinkLabels.unit(dr.type, dr.unit)}
+                      {fmtNumber(dr.count, lang)} × {productLabels.type(dr.type)}, {productLabels.unit(dr.type, dr.unit)}
                     </li>
                   ))}
                 </ul>

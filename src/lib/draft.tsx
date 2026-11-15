@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { dayPart, toDateStr } from './dates'
-import type { DayPart, Drink } from './types'
+import type { DayPart, Product } from './types'
 
 export interface Draft {
   categoryId?: string
@@ -8,8 +8,8 @@ export interface Draft {
   /** Tageszeit statt exakter Uhrzeit */
   dayPart: DayPart
   /** Alkohol: gewählte Sorten (auch wenn noch keine Menge erfasst ist) */
-  drinkTypes: string[]
-  drinks: Drink[]
+  productTypes: string[]
+  products: Product[]
   amount: number
   unitIdx: number
   spend: number
@@ -26,8 +26,8 @@ const fresh = (keep?: Partial<Draft>): Draft => {
   return {
     date: toDateStr(now),
     dayPart: dayPart(now),
-    drinkTypes: [],
-    drinks: [],
+    productTypes: [],
+    products: [],
     amount: 1,
     unitIdx: 0,
     spend: 0,

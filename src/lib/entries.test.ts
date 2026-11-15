@@ -1,21 +1,35 @@
 import { describe, expect, it } from 'vitest'
 import { dayPart, dayPartInFuture } from './dates'
 import { dailyGoalOnTrackToday } from './goals'
-import { setDrinkCount, sortDrinks, standardDrinks } from './catalog'
+import { legacyProducts, productSet, productTotal, setProductCount, sortProducts } from './catalog'
 
 describe('Alkohol: Standardgetränke', () => {
   it('rechnet mehrere Sorten und Einheiten zusammen', () => {
-    let d = setDrinkCount([], 'beer', 'large', 2)
-    d = setDrinkCount(d, 'wine', 'dl1', 2)
-    d = setDrinkCount(d, 'wine', 'dl2', 1)
-    expect(standardDrinks(d)).toBe(7.4)
+    let d = setProductCount([], 'beer', 'large', 2)
+    d = setProductCount(d, 'wine', 'dl1', 2)
+    d = setProductCount(d, 'wine', 'dl2', 1)
+    expect(productTotal(d)).toBe(7.4)
   })
 
   it('entfernt Einheiten mit Menge 0 und sortiert stabil', () => {
-    let d = setDrinkCount([], 'wine', 'dl1', 1)
-    d = setDrinkCount(d, 'beer', 'bottle33', 1)
-    expect(sortDrinks(d).map((x) => x.type)).toEqual(['beer', 'wine'])
-    expect(setDrinkCount(d, 'wine', 'dl1', 0)).toHaveLength(1)
+    let d = setProductCount([], 'wine', 'dl1', 1)
+    d = setProductCount(d, 'beer', 'bottle33', 1)
+    expect(sortProducts(d).map((x) => x.type)).toEqual(['beer', 'wine'])
+    expect(setProductCount(d, 'wine', 'dl1', 0)).toHaveLength(1)
+  })
+})
+
+describe('Nikotin: Produkte', () => {
+  it('rechnet Zigaretten, Snus und Vape zu Konsumeinheiten zusammen', () => {
+    let p = setProductCount([], 'cigarette', 'piece', 3)
+    p = setProductCount(p, 'snus', 'pouch', 2)
+    p = setProductCount(p, 'vape', 'puffs10', 1)
+    expect(productTotal(p)).toBe(6)
+    expect(sortProducts(p).map((x) => x.type)).toEqual(['cigarette', 'snus', 'vape'])
+  })
+  it('erkennt die Kategorien mit Produktwahl und führt ältere Einträge weiter', () => {
+    expect(productSet({ id: 'a', key: 'nicotine', name: '', abbr: '', units: [] } as never)).toBe('nicotine')
+    expect(legacyProducts('nicotine', 4)).toEqual([{ type: 'cigarette', unit: 'piece', count: 4 }])
   })
 })
 

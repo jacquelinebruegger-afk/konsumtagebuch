@@ -15,7 +15,7 @@ export interface Category {
 export type DayPart = 'morning' | 'forenoon' | 'noon' | 'afternoon' | 'evening' | 'night'
 
 /** Eine erfasste Alkoholmenge, z. B. 2 × Bier / Grosses Bier. */
-export interface Drink {
+export interface Product {
   /** Alkoholsorte, z. B. 'beer' */
   type: string
   /** Einheit der Sorte, z. B. 'large' */
@@ -34,7 +34,7 @@ export interface Entry {
   /** Gewählte Tageszeit; wenn gesetzt, ist `at` nur ein Richtwert und die Uhrzeit wird nicht angezeigt. */
   dayPart?: DayPart
   /** Alkohol: einzelne Getränke. `amount` enthält dann die Summe in Standardgetränken. */
-  drinks?: Drink[]
+  products?: Product[]
   context: string
   craving: number
   tension: number

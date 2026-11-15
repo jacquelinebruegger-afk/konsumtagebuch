@@ -1,17 +1,17 @@
 import { useId } from 'react'
-import { ALCOHOL_TYPES, alcoholType, drinkCount, setDrinkCount, sortDrinks, standardDrinks } from '../lib/catalog'
+import { type ProductSet, productCount, productType, typesOf, setProductCount, sortProducts, productTotal } from '../lib/catalog'
 import { DAYPART_ORDER, dayPartInFuture, fmtNumber, toDateStr } from '../lib/dates'
 import type { Key } from '../lib/de'
 import { useI18n } from '../lib/i18n'
-import type { DayPart, Drink } from '../lib/types'
+import type { DayPart, Product } from '../lib/types'
 import { IconMinus, IconPlus } from './Icons'
 
 /** Label einer Einheit, z. B. «Grosses Bier (5 dl)». */
-export function useDrinkLabels() {
+export function useProductLabels() {
   const { t } = useI18n()
   return {
-    type: (type: string) => t(`drink.type.${type}` as Key),
-    unit: (type: string, unit: string) => t(`drink.unit.${type}.${unit}` as Key),
+    type: (type: string) => t(`product.type.${type}` as Key),
+    unit: (type: string, unit: string) => t(`product.unit.${type}.${unit}` as Key),
   }
 }
 
@@ -106,41 +106,44 @@ function QtyStepper({ value, onChange, label }: { value: number; onChange: (n: n
 }
 
 /**
- * Alkohol: mehrere Sorten wählen, pro Sorte Mengen je Einheit erfassen.
+ * Alkohol und Nikotin: mehrere Produkte wählen, pro Produkt Mengen je Einheit erfassen.
  * So lassen sich z. B. am Abend 2 grosse Biere und 2 Gläser Wein in einem Eintrag festhalten.
  */
-export function DrinkFields({
+export function ProductFields({
+  set,
   types,
-  drinks,
+  products,
   onChange,
   error,
 }: {
+  set: ProductSet
   types: string[]
-  drinks: Drink[]
-  onChange: (p: { drinkTypes: string[]; drinks: Drink[] }) => void
+  products: Product[]
+  onChange: (p: { productTypes: string[]; products: Product[] }) => void
   error?: string
 }) {
   const { t, lang } = useI18n()
-  const label = useDrinkLabels()
-  const total = standardDrinks(drinks)
+  const label = useProductLabels()
+  const total = productTotal(products)
 
   const toggleType = (type: string) => {
     if (types.includes(type)) {
-      onChange({ drinkTypes: types.filter((x) => x !== type), drinks: drinks.filter((d) => d.type !== type) })
+      onChange({ productTypes: types.filter((x) => x !== type), products: products.filter((d) => d.type !== type) })
     } else {
-      onChange({ drinkTypes: [...types, type], drinks })
+      onChange({ productTypes: [...types, type], products })
     }
   }
 
-  const selected = ALCOHOL_TYPES.filter((x) => types.includes(x.key))
+  const all = typesOf(set)
+  const selected = all.filter((x) => types.includes(x.key))
 
   return (
     <>
       <fieldset className="fieldset">
-        <legend className="field__label">{t('new.drinks')}</legend>
-        <p className="field__hint field__hint--top">{t('new.drinksHint')}</p>
-        <div className="choices choices--types">
-          {ALCOHOL_TYPES.map((x) => (
+        <legend className="field__label">{t(`new.products.${set}` as Key)}</legend>
+        <p className="field__hint field__hint--top">{t('new.productsHint')}</p>
+        <div className={`choices choices--types${all.length === 3 ? ' choices--three' : ''}`}>
+          {all.map((x) => (
             <label key={x.key} className="choice">
               <input type="checkbox" checked={types.includes(x.key)} onChange={() => toggleType(x.key)} />
               <span className="choice__box">
@@ -152,19 +155,19 @@ export function DrinkFields({
       </fieldset>
 
       {selected.map((x) => (
-        <section key={x.key} className="drinkcard" aria-label={label.type(x.key)}>
-          <h3 className="drinkcard__title">{label.type(x.key)}</h3>
-          <ul className="drinkrows">
+        <section key={x.key} className="productcard" aria-label={label.type(x.key)}>
+          <h3 className="productcard__title">{label.type(x.key)}</h3>
+          <ul className="productrows">
             {x.units.map((u) => {
-              const n = drinkCount(drinks, x.key, u.key)
+              const n = productCount(products, x.key, u.key)
               const text = label.unit(x.key, u.key)
               return (
-                <li key={u.key} className={`drinkrow${n > 0 ? ' is-set' : ''}`}>
-                  <span className="drinkrow__label">{text}</span>
+                <li key={u.key} className={`productrow${n > 0 ? ' is-set' : ''}`}>
+                  <span className="productrow__label">{text}</span>
                   <QtyStepper
                     value={n}
                     label={`${label.type(x.key)}, ${text}`}
-                    onChange={(c) => onChange({ drinkTypes: types, drinks: setDrinkCount(drinks, x.key, u.key, c) })}
+                    onChange={(c) => onChange({ productTypes: types, products: setProductCount(products, x.key, u.key, c) })}
                   />
                 </li>
               )
@@ -174,9 +177,9 @@ export function DrinkFields({
       ))}
 
       {selected.length > 0 && (
-        <div className="drinktotal" aria-live="polite">
-          <strong>{t(total === 1 ? 'new.drinksTotal.one' : 'new.drinksTotal.other', { n: fmtNumber(total, lang) })}</strong>
-          <span>{t('new.drinksNote')}</span>
+        <div className="producttotal" aria-live="polite">
+          <strong>{t(`new.total.${set}.${total === 1 ? 'one' : 'other'}` as Key, { n: fmtNumber(total, lang) })}</strong>
+          <span>{t(`new.note.${set}` as Key)}</span>
         </div>
       )}
       {error && (
@@ -189,7 +192,7 @@ export function DrinkFields({
 }
 
 /** Kurzform für Listen, z. B. «Bier, Wein». */
-export function drinkTypesSummary(drinks: Drink[], typeLabel: (t: string) => string): string {
-  const keys = [...new Set(sortDrinks(drinks).map((d) => d.type))].filter((k) => alcoholType(k))
+export function productTypesSummary(products: Product[], typeLabel: (t: string) => string): string {
+  const keys = [...new Set(sortProducts(products).map((d) => d.type))].filter((k) => productType(k))
   return keys.map(typeLabel).join(', ')
 }
