@@ -1,12 +1,11 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
-import { dayPart, toDateStr, toTimeStr } from './dates'
+import { dayPart, toDateStr } from './dates'
 import type { DayPart, Drink } from './types'
 
 export interface Draft {
   categoryId?: string
   date: string
-  time: string
-  /** Alkohol: Tageszeit statt exakter Uhrzeit */
+  /** Tageszeit statt exakter Uhrzeit */
   dayPart: DayPart
   /** Alkohol: gewählte Sorten (auch wenn noch keine Menge erfasst ist) */
   drinkTypes: string[]
@@ -26,7 +25,6 @@ const fresh = (keep?: Partial<Draft>): Draft => {
   const now = new Date()
   return {
     date: toDateStr(now),
-    time: toTimeStr(now),
     dayPart: dayPart(now),
     drinkTypes: [],
     drinks: [],
@@ -56,7 +54,7 @@ export function DraftProvider({ children }: { children: ReactNode }) {
   const patch = useCallback((p: Partial<Draft>) => setDraft((d) => ({ ...d, ...p })), [])
   const reset = useCallback(
     (keepWhen = false) =>
-      setDraft((d) => (keepWhen ? fresh({ date: d.date, time: d.time, dayPart: d.dayPart, context: d.context }) : fresh())),
+      setDraft((d) => (keepWhen ? fresh({ date: d.date, dayPart: d.dayPart, context: d.context }) : fresh())),
     [],
   )
   const value = useMemo(() => ({ draft, patch, reset }), [draft, patch, reset])

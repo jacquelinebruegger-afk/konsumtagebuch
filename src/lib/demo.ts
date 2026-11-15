@@ -1,5 +1,5 @@
 import { CATALOG, initialCategories, standardDrinks } from './catalog'
-import { addDays, diffDays, monthRange, toDateStr, uid, weekRange } from './dates'
+import { addDays, dayPart, diffDays, monthRange, toDateStr, uid, weekRange } from './dates'
 import type { AppData, Drink, Entry, Goal, Settings } from './types'
 
 export const defaultSettings: Settings = { lang: 'de', push: true, reminder: true }
@@ -54,6 +54,7 @@ export function demoData(now = new Date()): AppData {
       id: uid(),
       categoryId: `cat-${categoryKey}`,
       at: at.toISOString(),
+      dayPart: dayPart(at),
       amount,
       unitIdx: 0,
       context: pick(CONTEXTS),

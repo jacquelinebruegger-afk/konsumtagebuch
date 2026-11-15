@@ -45,12 +45,13 @@ export function monthRange(ref: string): [string, string] {
 export type { DayPart }
 
 /** Beginn jeder Tageszeit (Stunde). Nacht: 23–5 Uhr. */
-export const DAYPART_START: Record<DayPart, number> = { morning: 5, noon: 11, afternoon: 14, evening: 18, night: 23 }
-export const DAYPART_ORDER: DayPart[] = ['morning', 'noon', 'afternoon', 'evening', 'night']
+export const DAYPART_START: Record<DayPart, number> = { morning: 5, forenoon: 9, noon: 12, afternoon: 14, evening: 18, night: 23 }
+export const DAYPART_ORDER: DayPart[] = ['morning', 'forenoon', 'noon', 'afternoon', 'evening', 'night']
 /** Richtwert für `at`, damit Einträge einer Tageszeit sinnvoll sortiert werden. */
 const DAYPART_ANCHOR: Record<DayPart, [number, number]> = {
-  morning: [8, 0],
-  noon: [12, 30],
+  morning: [7, 0],
+  forenoon: [10, 30],
+  noon: [13, 0],
   afternoon: [16, 0],
   evening: [20, 0],
   night: [23, 30],
@@ -58,8 +59,9 @@ const DAYPART_ANCHOR: Record<DayPart, [number, number]> = {
 
 export function dayPart(d: Date): DayPart {
   const h = d.getHours()
-  if (h >= 5 && h < 11) return 'morning'
-  if (h >= 11 && h < 14) return 'noon'
+  if (h >= 5 && h < 9) return 'morning'
+  if (h >= 9 && h < 12) return 'forenoon'
+  if (h >= 12 && h < 14) return 'noon'
   if (h >= 14 && h < 18) return 'afternoon'
   if (h >= 18 && h < 23) return 'evening'
   return 'night'

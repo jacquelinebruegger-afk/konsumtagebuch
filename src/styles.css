@@ -1116,7 +1116,7 @@ a {
   gap: 8px;
 }
 .choices--daypart {
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
 }
 .choices--types {
   grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
@@ -1162,6 +1162,10 @@ a {
 .choice input:focus-visible + .choice__box {
   outline: 3px solid var(--primary);
   outline-offset: 2px;
+}
+.choice__name {
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 .choice__hint {
   font-size: 0.8125rem;

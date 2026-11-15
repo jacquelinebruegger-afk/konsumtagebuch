@@ -12,7 +12,7 @@ export interface Category {
 }
 
 /** Tageszeit eines Eintrags (statt exakter Uhrzeit). */
-export type DayPart = 'morning' | 'noon' | 'afternoon' | 'evening' | 'night'
+export type DayPart = 'morning' | 'forenoon' | 'noon' | 'afternoon' | 'evening' | 'night'
 
 /** Eine erfasste Alkoholmenge, z. B. 2 × Bier / Grosses Bier. */
 export interface Drink {

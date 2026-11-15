@@ -19,9 +19,9 @@ describe('Alkohol: Standardgetränke', () => {
 })
 
 describe('Tageszeit', () => {
-  it('ordnet Uhrzeiten den fünf Tageszeiten zu', () => {
+  it('ordnet Uhrzeiten den sechs Tageszeiten zu', () => {
     const at = (h: number) => dayPart(new Date(2026, 0, 1, h))
-    expect([at(5), at(11), at(14), at(18), at(23), at(2)]).toEqual(['morning', 'noon', 'afternoon', 'evening', 'night', 'night'])
+    expect([at(5), at(9), at(12), at(14), at(18), at(23), at(2)]).toEqual(['morning', 'forenoon', 'noon', 'afternoon', 'evening', 'night', 'night'])
   })
 
   it('erkennt Tageszeiten in der Zukunft', () => {

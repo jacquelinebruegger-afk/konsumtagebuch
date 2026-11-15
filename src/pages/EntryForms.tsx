@@ -4,7 +4,7 @@ import { IconChevronDown, IconPlus, IconSearch } from '../components/Icons'
 import { DrinkFields, WhenFields, dayPartError } from '../components/AlcoholFields'
 import { Badge, ConfirmDialog, Field, ScoreSlider, Stepper, TopBar, useGoBack, useToast } from '../components/ui'
 import { hasSpend, isAlcohol, standardDrinks, unitStep } from '../lib/catalog'
-import { atForDayPart, combine, dayPart as dayPartOf, toDateStr, toTimeStr } from '../lib/dates'
+import { atForDayPart, dayPart as dayPartOf, toDateStr } from '../lib/dates'
 import type { Key } from '../lib/de'
 import { useDraft } from '../lib/draft'
 import { useI18n } from '../lib/i18n'
@@ -106,7 +106,7 @@ export function WizardCategory() {
 }
 
 export function WizardDetails() {
-  const { t, lang, catName } = useI18n()
+  const { t, catName } = useI18n()
   const { data } = useStore()
   const { draft, patch } = useDraft()
   const navigate = useNavigate()
@@ -116,26 +116,22 @@ export function WizardDetails() {
   if (!cat) return <Navigate to="/neu/kategorie" replace />
 
   const alcohol = isAlcohol(cat)
-  const futureErr = alcohol
-    ? dayPartError(draft.date, draft.dayPart)
-    : new Date(combine(draft.date, draft.time)) > new Date()
+  const futureErr = dayPartError(draft.date, draft.dayPart)
   const amountErr = alcohol ? standardDrinks(draft.drinks) <= 0 : draft.amount <= 0
-  const valid = !!draft.date && (alcohol || !!draft.time) && !futureErr && !amountErr
+  const valid = !!draft.date && !futureErr && !amountErr
 
   return (
     <div className="screen">
       <TopBar title={t('new.title')} left="back" onLeft={() => navigate('/neu/kategorie', { replace: true })} />
       <div className="content">
         <StepLabel n={2} />
-        {alcohol && (
-          <WhenFields
-            date={draft.date}
-            dayPart={draft.dayPart}
-            onDate={(date) => patch({ date })}
-            onDayPart={(dayPart) => patch({ dayPart })}
-            showError={tried}
-          />
-        )}
+        <WhenFields
+          date={draft.date}
+          dayPart={draft.dayPart}
+          onDate={(date) => patch({ date })}
+          onDayPart={(dayPart) => patch({ dayPart })}
+          showError={tried}
+        />
         <div className="chosen">
           <Badge category={cat} />
           <span className="chosen__name">{catName(cat)}</span>
@@ -154,36 +150,6 @@ export function WizardDetails() {
           />
         ) : (
           <>
-        <fieldset className="fieldset">
-          <legend className="field__label">{t('new.dateTime')}</legend>
-          <div className="row2">
-            <input
-              type="date"
-              className="input"
-              value={draft.date}
-              max={toDateStr(new Date())}
-              onChange={(e) => patch({ date: e.target.value })}
-              aria-label={t('new.date')}
-              aria-invalid={tried && futureErr}
-              lang={lang}
-            />
-            <input
-              type="time"
-              className="input"
-              value={draft.time}
-              onChange={(e) => patch({ time: e.target.value })}
-              aria-label={t('new.time')}
-              aria-invalid={tried && futureErr}
-              lang={lang}
-            />
-          </div>
-          {futureErr && (
-            <p className="field__error" role="alert">
-              {t('new.futureError')}
-            </p>
-          )}
-        </fieldset>
-
         <AmountFields
           cat={cat}
           amount={draft.amount}
@@ -314,11 +280,12 @@ export function WizardFeeling() {
     const alcohol = isAlcohol(cat)
     const entry = addEntry({
       categoryId: draft.categoryId!,
-      at: alcohol ? atForDayPart(draft.date, draft.dayPart) : combine(draft.date, draft.time),
+      at: atForDayPart(draft.date, draft.dayPart),
       amount: alcohol ? standardDrinks(draft.drinks) : draft.amount,
       unitIdx: alcohol ? 0 : draft.unitIdx,
       spend: spendNum > 0 ? spendNum : undefined,
-      ...(alcohol ? { dayPart: draft.dayPart, drinks: draft.drinks } : {}),
+      dayPart: draft.dayPart,
+      ...(alcohol ? { drinks: draft.drinks } : {}),
       context: draft.context.trim(),
       craving: draft.craving,
       tension: draft.tension,
@@ -390,7 +357,6 @@ export function EntryEdit() {
       ? {
           categoryId: entry.categoryId,
           date: toDateStr(new Date(entry.at)),
-          time: toTimeStr(new Date(entry.at)),
           dayPart: (entry.dayPart ?? dayPartOf(new Date(entry.at))) as DayPart,
           drinkTypes: [...new Set(initialDrinks.map((d) => d.type))],
           drinks: initialDrinks,
@@ -415,9 +381,9 @@ export function EntryEdit() {
 
   const patch = (p: Partial<typeof form>) => setForm((f) => (f ? { ...f, ...p } : f))
   const alcohol = isAlcohol(cat)
-  const futureErr = alcohol ? dayPartError(form.date, form.dayPart) : new Date(combine(form.date, form.time)) > new Date()
+  const futureErr = dayPartError(form.date, form.dayPart)
   const amountErr = alcohol ? standardDrinks(form.drinks) <= 0 : form.amount <= 0
-  const valid = !futureErr && !amountErr && !!form.date && (alcohol || !!form.time)
+  const valid = !futureErr && !amountErr && !!form.date
 
   const save = () => {
     setTried(true)
@@ -426,10 +392,10 @@ export function EntryEdit() {
     updateEntry({
       ...entry,
       categoryId: form.categoryId,
-      at: alcohol ? (keepAt ? entry.at : atForDayPart(form.date, form.dayPart)) : combine(form.date, form.time),
+      at: keepAt ? entry.at : atForDayPart(form.date, form.dayPart),
       amount: alcohol ? standardDrinks(form.drinks) : form.amount,
       unitIdx: alcohol ? 0 : form.unitIdx,
-      dayPart: alcohol ? form.dayPart : undefined,
+      dayPart: form.dayPart,
       drinks: alcohol ? form.drinks : undefined,
       spend: hasSpend(cat) && form.spend > 0 ? form.spend : undefined,
       context: form.context.trim(),
@@ -447,15 +413,13 @@ export function EntryEdit() {
     <div className="screen">
       <TopBar title={t('entry.edit')} left="close" onLeft={goBack} />
       <div className="content">
-        {alcohol && (
-          <WhenFields
-            date={form.date}
-            dayPart={form.dayPart}
-            onDate={(date) => patch({ date })}
-            onDayPart={(dayPart) => patch({ dayPart })}
-            showError={tried}
-          />
-        )}
+        <WhenFields
+          date={form.date}
+          dayPart={form.dayPart}
+          onDate={(date) => patch({ date })}
+          onDayPart={(dayPart) => patch({ dayPart })}
+          showError={tried}
+        />
         <Field label={t('entry.category')} htmlFor="cat">
           <div className="select-wrap">
             <select
@@ -483,19 +447,6 @@ export function EntryEdit() {
           />
         ) : (
           <>
-        <fieldset className="fieldset">
-          <legend className="field__label">{t('new.dateTime')}</legend>
-          <div className="row2">
-            <input type="date" className="input" value={form.date} max={toDateStr(new Date())} onChange={(e) => patch({ date: e.target.value })} aria-label={t('new.date')} />
-            <input type="time" className="input" value={form.time} onChange={(e) => patch({ time: e.target.value })} aria-label={t('new.time')} />
-          </div>
-          {futureErr && (
-            <p className="field__error" role="alert">
-              {t('new.futureError')}
-            </p>
-          )}
-        </fieldset>
-
         <AmountFields
           cat={cat}
           amount={form.amount}
