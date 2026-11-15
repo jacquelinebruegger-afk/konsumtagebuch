@@ -15,13 +15,18 @@ const ICONS: Record<string, ReactNode> = {
   ),
   amphetamines: (
     <>
-      <path className="fl" d="M8 26v11a14 5 0 0 0 28 0V26z" />
-      <ellipse className="fw" cx="22" cy="26" rx="14" ry="5" />
-      <path className="fw" d="M13 25c3-8 6-11 9-11s6 3 9 11" />
-      <path d="M8 26v11a14 5 0 0 0 28 0V26" />
-      <circle className="fd" cx="38" cy="14" r="1.4" stroke="none" />
-      <circle className="fd" cx="42" cy="19" r="1.4" stroke="none" />
-      <circle className="fd" cx="36" cy="20" r="1.1" stroke="none" />
+      {/* Kunststoff-Ampulle (Reaktionsgefäss) mit aufgeklapptem Deckel, mit Pulver gefüllt */}
+      <path className="fl" d="M14 16v8l6 17a4 4 0 0 0 8 0l6-17v-8z" />
+      <path className="fw" d="M15.400 28q4.300-2.500 8.600 0t8.600 0L28 41a4 4 0 0 1-8 0z" stroke="none" />
+      <path d="M15.400 28q4.300-2.500 8.600 0t8.600 0" strokeWidth={1.8} />
+      <circle className="fd" cx="21.500" cy="33" r="1.3" stroke="none" />
+      <circle className="fd" cx="26.500" cy="32" r="1.3" stroke="none" />
+      <circle className="fd" cx="24" cy="37.500" r="1.3" stroke="none" />
+      <path d="M14 16v8l6 17a4 4 0 0 0 8 0l6-17v-8" />
+      <path d="M11.500 16h25" />
+      <g transform="rotate(-100 14 16)">
+        <rect className="fm" x="14" y="13" width="13" height="6" rx="3" />
+      </g>
     </>
   ),
   cannabis: (
@@ -114,12 +119,17 @@ const ICONS: Record<string, ReactNode> = {
   ),
   cocaine: (
     <>
-      <path className="fl" d="M11 10h26v30a3 3 0 0 1-3 3H14a3 3 0 0 1-3-3z" />
-      <path d="M11 16h26" strokeDasharray="1 4" />
-      <path className="fw" d="M15 41c1.5-9 5-14 9-14s7.5 5 9 14z" />
-      <circle className="fd" cx="19" cy="23" r="1.3" stroke="none" />
-      <circle className="fd" cx="28" cy="21.5" r="1.3" stroke="none" />
-      <circle className="fd" cx="24" cy="20" r="1.3" stroke="none" />
+      {/* Plastik-Baggy mit Zip-Verschluss, Pulver füllt die ganze Breite */}
+      <path className="fl" d="M9 8h30v32a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3z" />
+      <path className="fw" d="M9 29q5-4 10 0t10 0t10 0V40a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3z" stroke="none" />
+      <path d="M9 29q5-4 10 0t10 0t10 0" strokeWidth={1.8} />
+      <circle className="fd" cx="16" cy="35" r="1.3" stroke="none" />
+      <circle className="fd" cx="25" cy="33.500" r="1.3" stroke="none" />
+      <circle className="fd" cx="32" cy="37" r="1.3" stroke="none" />
+      <circle className="fd" cx="22" cy="39.500" r="1.3" stroke="none" />
+      <rect className="fm" x="9" y="12" width="30" height="5" />
+      <path d="M9 8h30v32a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3z" />
+      <path d="M9 12h30M9 17h30" />
     </>
   ),
   mdma: (
