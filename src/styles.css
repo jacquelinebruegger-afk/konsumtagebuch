@@ -552,15 +552,17 @@ a {
 .stepper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
 }
 .stepper__btn {
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border: 1.5px solid var(--field);
   border-radius: var(--radius);
   background: var(--bg);
@@ -574,7 +576,8 @@ a {
   cursor: not-allowed;
 }
 .stepper__center {
-  flex: 1;
+  flex: 0 1 128px;
+  width: 128px;
   min-width: 0;
   display: flex;
   flex-direction: column;
