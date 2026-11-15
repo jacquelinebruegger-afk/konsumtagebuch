@@ -81,13 +81,13 @@ export function DiaryLayout() {
         <TopBar title={t('diary.title')} right={newBtn} />
         <div className="content">
           {banner && (
-            <div className={`banner banner--${banner.kind}`} role="status">
+            <div className={`banner banner--${banner.kind} banner--dismissible`} role="status">
               <IconInfo />
-              <p>{banner.text}</p>
               <button type="button" className="labelbtn labelbtn--sm" onClick={() => setDismissed(true)}>
                 <IconClose size={20} />
                 <span>{t('common.close')}</span>
               </button>
+              <p>{banner.text}</p>
             </div>
           )}
 
