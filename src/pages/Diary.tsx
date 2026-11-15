@@ -1,22 +1,23 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Outlet, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
-import { IconBook, IconChevronDown, IconChevronRight, IconClose, IconNote, IconPlus, IconInfo } from '../components/Icons'
+import { IconBook, IconChevronDown, IconChevronRight, IconClose, IconPlus, IconInfo } from '../components/Icons'
 import { productTypesSummary, useProductLabels } from '../components/ProductFields'
 import { productSet, sortProducts } from '../lib/catalog'
-import { Badge, ConfirmDialog, ScoreBar, TopBar, useToast } from '../components/ui'
+import { Badge, ConfirmDialog, ScoreBar, Sheet, TopBar, useGoBack, useToast } from '../components/ui'
 import { addDays, dayPart, fmtDayLong, fmtDayMedium, fmtNumber, fmtTime, toDateStr } from '../lib/dates'
 import { dailyGoalReachedYesterday, entryDay } from '../lib/goals'
 import { useI18n } from '../lib/i18n'
 import { useStore } from '../lib/store'
 import type { Key } from '../lib/de'
 import type { Entry } from '../lib/types'
+import { EntryEdit } from './EntryForms'
 
 export function DiaryLayout() {
   const { t, tn, lang, catName, entryUnit } = useI18n()
   const productLabels = useProductLabels()
   const { data } = useStore()
   const location = useLocation()
-  const detailMatch = useMatch('/tagebuch/eintrag/:id')
+  const detailMatch = useMatch('/tagebuch/eintrag/:id/*')
   const selectedId = detailMatch?.params.id
   const today = toDateStr(new Date())
   const yesterday = addDays(today, -1)
@@ -76,8 +77,8 @@ export function DiaryLayout() {
   )
 
   return (
-    <div className={`split${selectedId ? ' has-detail' : ''}`}>
-      <section className="screen split__list" aria-label={t('diary.title')}>
+    <>
+      <section className="screen" aria-label={t('diary.title')}>
         <TopBar title={t('diary.title')} right={newBtn} />
         <div className="content">
           {banner && (
@@ -169,25 +170,8 @@ export function DiaryLayout() {
         </div>
       </section>
 
-      <section className="split__detail" aria-label={t('entry.title')}>
-        <Outlet />
-      </section>
-    </div>
-  )
-}
-
-export function DiaryEmptyDetail() {
-  const { t } = useI18n()
-  return (
-    <div className="screen screen--placeholder">
-      <div className="empty">
-        <span className="empty__icon" aria-hidden="true">
-          <IconNote size={32} />
-        </span>
-        <h2>{t('diary.select.title')}</h2>
-        <p>{t('diary.select.text')}</p>
-      </div>
-    </div>
+      <Outlet />
+    </>
   )
 }
 
@@ -198,6 +182,7 @@ export function EntryDetail() {
   const { data, deleteEntry } = useStore()
   const navigate = useNavigate()
   const toast = useToast()
+  const close = useGoBack('/tagebuch')
   const [confirm, setConfirm] = useState(false)
 
   const entry = data.entries.find((e) => e.id === id)
@@ -205,12 +190,11 @@ export function EntryDetail() {
 
   if (!entry) {
     return (
-      <div className="screen">
-        <TopBar title={t('entry.title')} left="back" onLeft={() => navigate('/tagebuch', { replace: true })} leftMobileOnly />
+      <Sheet title={t('entry.title')} onClose={() => navigate('/tagebuch', { replace: true })}>
         <div className="content">
           <p>{t('entry.notFound')}</p>
         </div>
-      </div>
+      </Sheet>
     )
   }
 
@@ -224,8 +208,20 @@ export function EntryDetail() {
   }
 
   return (
-    <div className="screen">
-      <TopBar title={t('entry.title')} left="back" onLeft={() => navigate('/tagebuch')} leftMobileOnly />
+    <Sheet
+      title={t('entry.title')}
+      onClose={close}
+      actions={
+        <>
+          <Link to={`/tagebuch/eintrag/${entry.id}/bearbeiten`} replace className="btn btn--primary">
+            {t('common.edit')}
+          </Link>
+          <button type="button" className="btn btn--link btn--link-danger" onClick={() => setConfirm(true)}>
+            {t('entry.delete')}
+          </button>
+        </>
+      }
+    >
       <div className="content">
         <div className="entry-head">
           {cat && <Badge category={cat} size="lg" />}
@@ -288,14 +284,6 @@ export function EntryDetail() {
           </>
         )}
       </div>
-      <div className="actions">
-        <Link to={`/eintrag/${entry.id}/bearbeiten`} className="btn btn--primary">
-          {t('common.edit')}
-        </Link>
-        <button type="button" className="btn btn--link btn--link-danger" onClick={() => setConfirm(true)}>
-          {t('entry.delete')}
-        </button>
-      </div>
       <ConfirmDialog
         open={confirm}
         title={t('entry.deleteTitle')}
@@ -304,6 +292,12 @@ export function EntryDetail() {
         onConfirm={remove}
         onClose={() => setConfirm(false)}
       />
-    </div>
+    </Sheet>
   )
+}
+
+/** Route «tagebuch/eintrag/:id/*»: Detail oder Bearbeiten, jeweils als Overlay über der Liste. */
+export function EntryOverlay() {
+  const params = useParams()
+  return params['*'] === 'bearbeiten' ? <EntryEdit /> : <EntryDetail />
 }

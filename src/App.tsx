@@ -6,8 +6,8 @@ import { DraftProvider } from './lib/draft'
 import { I18nProvider } from './lib/i18n'
 import { StoreProvider, useStore } from './lib/store'
 import { CategoriesManage, CategoryCatalog, CategoryForm } from './pages/Categories'
-import { DiaryEmptyDetail, DiaryLayout, EntryDetail } from './pages/Diary'
-import { EntryEdit, WizardCategory, WizardDetails, WizardFeeling } from './pages/EntryForms'
+import { DiaryLayout, EntryOverlay } from './pages/Diary'
+import { WizardCategory, WizardDetails, WizardFeeling } from './pages/EntryForms'
 import { GoalCategory, GoalForm, GoalsPage } from './pages/Goals'
 import { HomePage } from './pages/Home'
 import { ImprintPage, LockScreen, MorePage, PrivacyPage, SharePage, SupportPage } from './pages/More'
@@ -23,10 +23,8 @@ function Gate() {
           <Route index element={<Navigate to="/start" replace />} />
           <Route path="start" element={<HomePage />} />
           <Route path="tagebuch" element={<DiaryLayout />}>
-            <Route index element={<DiaryEmptyDetail />} />
-            <Route path="eintrag/:id" element={<EntryDetail />} />
+            <Route path="eintrag/:id/*" element={<EntryOverlay />} />
           </Route>
-          <Route path="eintrag/:id/bearbeiten" element={<EntryEdit />} />
           <Route path="neu">
             <Route index element={<Navigate to="kategorie" replace />} />
             <Route path="kategorie" element={<WizardCategory />} />

@@ -23,8 +23,7 @@
   --danger-bar: #c0392b;
   --radius: 12px;
   --tabbar-h: 68px;
-  --col-w: 560px; /* Breite der Hauptspalte auf Desktop, auf allen Seiten gleich */
-  --page-w: 1160px; /* Maximale Gesamtbreite des Arbeitsbereichs auf Desktop */
+  --col-w: 720px; /* Breite der Inhaltsspalte auf Desktop, auf allen Seiten gleich */
   --font-body: 'Source Sans 3 Variable', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-head: 'Roboto Slab Variable', 'Roboto Slab', Georgia, serif;
 }
@@ -825,16 +824,6 @@ a {
 }
 
 /* ---------- Diary ---------- */
-
-.split__detail {
-  min-width: 0;
-}
-.split.has-detail .split__list {
-  display: none;
-}
-.split:not(.has-detail) .split__detail {
-  display: none;
-}
 
 .banner {
   display: flex;
@@ -1680,6 +1669,54 @@ a.listrow:hover {
   margin-top: 12px;
 }
 
+/* ---------- Sheet (Overlay) ---------- */
+
+.sheet {
+  width: min(var(--col-w), calc(100% - 48px));
+  max-width: none;
+  max-height: min(calc(100dvh - 48px), 900px);
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.sheet[open] {
+  display: flex;
+}
+.sheet::backdrop {
+  background: rgba(29, 42, 47, 0.6);
+}
+.sheet__inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  max-height: inherit;
+}
+.sheet__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.sheet .topbar,
+.sheet .actions {
+  position: static;
+}
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+@media (max-width: 899px) {
+  .sheet {
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+    margin: auto 0 0;
+    border-radius: 20px 20px 0 0;
+  }
+}
+
 /* ---------- Modal, Toast, Lock ---------- */
 
 .modal {
@@ -1792,16 +1829,9 @@ a.listrow:hover {
 
 /* ---------- Desktop ---------- */
 
-.only-mobile {
-  display: inline-flex;
-}
-
 @media (min-width: 900px) {
   body {
     background: var(--bg);
-  }
-  .only-mobile {
-    display: none;
   }
   .shell {
     display: grid;
@@ -1876,15 +1906,14 @@ a.listrow:hover {
   .main,
   .shell:not(.is-flow) .main {
     min-height: 100dvh;
-    /* Arbeitsbereich zentrieren: gleiche linke Kante auf allen Seiten */
-    padding: 32px max(32px, calc((100vw - 264px - var(--page-w)) / 2)) 48px;
+    padding: 32px 32px 48px;
   }
   .screen,
   .shell:not(.is-flow) .screen {
     min-height: 0;
     width: 100%;
     max-width: var(--col-w);
-    margin: 0;
+    margin: 0 auto;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 20px;
@@ -1925,46 +1954,6 @@ a.listrow:hover {
     padding-left: 32px;
     padding-right: 32px;
   }
-  .split {
-    display: grid;
-    grid-template-columns: minmax(340px, 1fr) minmax(0, 1fr);
-    gap: 24px;
-    max-width: none;
-    margin: 0;
-    align-items: start;
-  }
-  .split.has-detail .split__list,
-  .split:not(.has-detail) .split__detail {
-    display: flex;
-  }
-  .split__list.screen,
-  .split__detail > .screen {
-    margin: 0;
-    max-width: none;
-  }
-  .split__list .content {
-    padding-left: 32px;
-    padding-right: 32px;
-  }
-  .split__detail {
-    position: sticky;
-    top: 32px;
-  }
-  .split__detail > .screen {
-    max-height: calc(100dvh - 64px);
-    overflow: auto;
-  }
-  .split__detail .topbar {
-    position: static;
-  }
-  .split__detail .actions {
-    position: sticky;
-    bottom: 0;
-  }
-  .screen--placeholder {
-    min-height: 360px;
-    justify-content: center;
-  }
   .eyebrow--pad {
     padding: 28px 32px 10px;
   }
@@ -1994,13 +1983,6 @@ a.listrow:hover {
   }
   .tile {
     font-size: 0.95rem;
-  }
-}
-
-/* Breite Desktops: Liste hat dieselbe Breite wie die Hauptspalte der anderen Seiten */
-@media (min-width: 1360px) {
-  .split {
-    grid-template-columns: var(--col-w) minmax(0, 1fr);
   }
 }
 

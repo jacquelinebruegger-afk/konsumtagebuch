@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { IconChevronDown, IconPlus } from '../components/Icons'
 import { CategoryPicker, useSortedCategories } from '../components/CategoryPicker'
 import { ProductFields, WhenFields, dayPartError } from '../components/ProductFields'
-import { Badge, ConfirmDialog, Field, ScoreSlider, Stepper, TopBar, useGoBack, useToast } from '../components/ui'
+import { Badge, ConfirmDialog, Field, Modal, ScoreSlider, Sheet, Stepper, TopBar, useGoBack, useToast } from '../components/ui'
 import { hasSpend, legacyProducts, productSet, productTotal, unitStep } from '../lib/catalog'
 import { atForDayPart, dayPart as dayPartOf, toDateStr } from '../lib/dates'
 import type { Key } from '../lib/de'
@@ -302,7 +302,7 @@ export function EntryEdit() {
   const { data, updateEntry, deleteEntry } = useStore()
   const navigate = useNavigate()
   const toast = useToast()
-  const goBack = useGoBack(`/tagebuch/eintrag/${id}`)
+  const goBack = useGoBack('/tagebuch')
   const categories = useSortedCategories()
   const entry = data.entries.find((e) => e.id === id)
 
@@ -328,8 +328,10 @@ export function EntryEdit() {
         }
       : null
   })
+  const initialJson = useRef(JSON.stringify(form))
   const [tried, setTried] = useState(false)
   const [confirm, setConfirm] = useState(false)
+  const [leaveAsk, setLeaveAsk] = useState(false)
 
   if (!entry || !form) return <Navigate to="/tagebuch" replace />
   const cat = data.categories.find((c) => c.id === form.categoryId)
@@ -341,9 +343,12 @@ export function EntryEdit() {
   const amountErr = set ? productTotal(form.products) <= 0 : form.amount <= 0
   const valid = !futureErr && !amountErr && !!form.date
 
-  const save = () => {
+  const dirty = JSON.stringify(form) !== initialJson.current
+
+  /** Speichert und schliesst das Overlay. Gibt false zurück, wenn Eingaben noch fehlen. */
+  const save = (): boolean => {
     setTried(true)
-    if (!valid) return
+    if (!valid) return false
     const keepAt = toDateStr(new Date(entry.at)) === form.date && (entry.dayPart ?? dayPartOf(new Date(entry.at))) === form.dayPart
     updateEntry({
       ...entry,
@@ -362,12 +367,28 @@ export function EntryEdit() {
       notes: form.notes.trim(),
     })
     toast(t('entry.updated'))
-    navigate(`/tagebuch/eintrag/${entry.id}`, { replace: true })
+    goBack()
+    return true
   }
 
+  /** Schliessen: bei ungespeicherten Änderungen zuerst nachfragen. */
+  const requestClose = () => (dirty ? setLeaveAsk(true) : goBack())
+
   return (
-    <div className="screen">
-      <TopBar title={t('entry.edit')} left="back" onLeft={goBack} />
+    <Sheet
+      title={t('entry.edit')}
+      onClose={requestClose}
+      actions={
+        <>
+          <button type="button" className="btn btn--primary" onClick={save}>
+            {t('entry.saveChanges')}
+          </button>
+          <button type="button" className="btn btn--link btn--link-danger" onClick={() => setConfirm(true)}>
+            {t('entry.delete')}
+          </button>
+        </>
+      }
+    >
       <div className="content">
         <WhenFields
           date={form.date}
@@ -437,14 +458,30 @@ export function EntryEdit() {
           />
         </Field>
       </div>
-      <div className="actions">
-        <button type="button" className="btn btn--primary" onClick={save}>
-          {t('entry.saveChanges')}
-        </button>
-        <button type="button" className="btn btn--link btn--link-danger" onClick={() => setConfirm(true)}>
-          {t('entry.delete')}
-        </button>
-      </div>
+      <Modal
+        open={leaveAsk}
+        onClose={() => setLeaveAsk(false)}
+        title={t('entry.unsavedTitle')}
+        actions={
+          <>
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={() => {
+                setLeaveAsk(false)
+                save()
+              }}
+            >
+              {t('entry.unsavedSave')}
+            </button>
+            <button type="button" className="btn btn--secondary" onClick={goBack}>
+              {t('entry.unsavedDiscard')}
+            </button>
+          </>
+        }
+      >
+        <p>{t('entry.unsavedText')}</p>
+      </Modal>
       <ConfirmDialog
         open={confirm}
         title={t('entry.deleteTitle')}
@@ -458,6 +495,6 @@ export function EntryEdit() {
         }}
         onClose={() => setConfirm(false)}
       />
-    </div>
+    </Sheet>
   )
 }

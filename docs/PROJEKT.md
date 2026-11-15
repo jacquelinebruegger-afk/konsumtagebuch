@@ -8,7 +8,7 @@ Web-App für Menschen mit einer Sucht, die ihren Konsum dokumentieren. Es ist ei
 - Flow: 4 Tabs (Start, Tagebuch, Ziele, Profil), jederzeit erreichbar. Eintrag erfassen in 3 Schritten (Kategorie, Details, Befinden).
 - Design orientiert sich an https://www.safezone.ch/de/ (Türkis, dunkle Schrift, helle Flächen, Serifen für Titel).
 - Barrierefreiheit hat Vorrang vor dem exakten SafeZone-Look (Kontraste mindestens WCAG AA).
-- Responsive: Mobile (Tab-Leiste unten) und Desktop (Seitenleiste, Tagebuch als Liste mit Detail).
+- Responsive: Mobile (Tab-Leiste unten) und Desktop (Seitenleiste, eine Inhaltsspalte; Tagebucheinträge öffnen und bearbeiten im Overlay, beim Schliessen mit Änderungen wird nachgefragt).
 - Sprachen: Deutsch, Französisch, Italienisch.
 - Kein Gewicht und kein Geschlecht erfassen (im Briefing explizit gestrichen).
 

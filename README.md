@@ -1,6 +1,6 @@
 # Konsumtagebuch (Prototyp)
 
-Klickbarer Web-App-Prototyp für ein Konsumtagebuch. Responsive (Mobile mit Tab-Leiste, Desktop mit Seitenleiste und Listen-/Detail-Ansicht), Deutsch, Französisch und Italienisch.
+Klickbarer Web-App-Prototyp für ein Konsumtagebuch. Responsive (Mobile mit Tab-Leiste, Desktop mit Seitenleiste; Tagebucheinträge öffnen als Overlay), Deutsch, Französisch und Italienisch.
 
 ## Starten
 

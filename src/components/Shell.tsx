@@ -14,7 +14,9 @@ const ROOTS = new Set(['/start', '/tagebuch', '/ziele', '/mehr'])
 
 export function Shell() {
   const { t } = useI18n()
-  const { pathname } = useLocation()
+  const { pathname: fullPath } = useLocation()
+  // Tagebucheinträge öffnen als Overlay über der Liste: die Seite dahinter bleibt unverändert.
+  const pathname = fullPath.startsWith('/tagebuch/eintrag/') ? '/tagebuch' : fullPath
   const mainRef = useRef<HTMLElement>(null)
   const isRoot = ROOTS.has(pathname.replace(/\/$/, ''))
 

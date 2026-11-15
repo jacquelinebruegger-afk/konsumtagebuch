@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { categoryAbbr } from '../lib/store'
 import { useI18n } from '../lib/i18n'
@@ -32,22 +32,24 @@ interface TopBarProps {
   onLeft?: () => void
   leftLabel?: string
   right?: ReactNode
-  leftMobileOnly?: boolean
+  titleId?: string
 }
 
-export function TopBar({ title, left, onLeft, leftLabel, right, leftMobileOnly }: TopBarProps) {
+export function TopBar({ title, left, onLeft, leftLabel, right, titleId }: TopBarProps) {
   const { t } = useI18n()
   return (
     <header className="topbar">
       <div className="topbar__side">
         {left && (
-          <button type="button" className={`labelbtn${leftMobileOnly ? ' only-mobile' : ''}`} onClick={onLeft}>
+          <button type="button" className="labelbtn" onClick={onLeft}>
             {left === 'back' ? <IconBack /> : <IconClose />}
             <span>{leftLabel ?? (left === 'back' ? t('common.back') : t('common.close'))}</span>
           </button>
         )}
       </div>
-      <h1 className="topbar__title">{title}</h1>
+      <h1 id={titleId} className="topbar__title">
+        {title}
+      </h1>
       <div className="topbar__side topbar__side--right">{right}</div>
     </header>
   )
@@ -261,6 +263,56 @@ export function Modal({
           {actions && <div className="modal__actions">{actions}</div>}
         </div>
       )}
+    </dialog>
+  )
+}
+
+/**
+ * Overlay für Detailansichten und Formulare (z. B. Tagebucheintrag).
+ * Nutzt <dialog>: Hintergrund abgedunkelt, Fokus bleibt im Overlay, Esc schliesst.
+ * Schliessen läuft immer über `onClose`, damit z. B. ungespeicherte Änderungen abgefragt werden können.
+ */
+export function Sheet({
+  title,
+  onClose,
+  children,
+  actions,
+}: {
+  title: string
+  onClose: () => void
+  children: ReactNode
+  actions?: ReactNode
+}) {
+  const ref = useRef<HTMLDialogElement>(null)
+  const titleId = useId()
+
+  useLayoutEffect(() => {
+    const d = ref.current
+    if (d && !d.open) d.showModal()
+    return () => {
+      // Schliessen, solange das Element noch im DOM ist, damit der Fokus zurückspringt.
+      if (d?.open) d.close()
+    }
+  }, [])
+
+  return (
+    <dialog
+      ref={ref}
+      className="sheet"
+      aria-labelledby={titleId}
+      onCancel={(e) => {
+        e.preventDefault()
+        onClose()
+      }}
+      onClick={(e) => {
+        if (e.target === ref.current) onClose()
+      }}
+    >
+      <div className="sheet__inner">
+        <TopBar title={title} titleId={titleId} left="close" onLeft={onClose} />
+        <div className="sheet__scroll">{children}</div>
+        {actions && <div className="actions">{actions}</div>}
+      </div>
     </dialog>
   )
 }
