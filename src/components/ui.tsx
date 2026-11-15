@@ -370,3 +370,49 @@ export function Field({
     </div>
   )
 }
+
+export interface ChipOption {
+  value: string
+  label: string
+  sub?: string
+}
+
+export function ChipGroup({
+  legend,
+  options,
+  value,
+  onChange,
+  error,
+  hint,
+}: {
+  legend: string
+  options: ChipOption[]
+  value?: string
+  onChange: (v: string) => void
+  error?: string
+  hint?: string
+}) {
+  const name = useId()
+  return (
+    <fieldset className={`fieldset chipgroup${error ? ' chipgroup--error' : ''}`}>
+      <legend className="field__label">{legend}</legend>
+      {hint && <p className="field__hint chipgroup__hint">{hint}</p>}
+      <div className="chips">
+        {options.map((o) => (
+          <label key={o.value} className={`chip${o.sub ? ' chip--two' : ''}`}>
+            <input type="radio" name={name} value={o.value} checked={value === o.value} onChange={() => onChange(o.value)} />
+            <span className="chip__body">
+              <span className="chip__label">{o.label}</span>
+              {o.sub && <span className="chip__sub">{o.sub}</span>}
+            </span>
+          </label>
+        ))}
+      </div>
+      {error && (
+        <p className="field__error" role="alert">
+          {error}
+        </p>
+      )}
+    </fieldset>
+  )
+}

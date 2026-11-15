@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import type { AlcoholDraft } from './alcohol'
 import { toDateStr, toTimeStr } from './dates'
 
 export interface Draft {
@@ -14,6 +15,7 @@ export interface Draft {
   mood: number
   pain: number
   notes: string
+  alcohol: AlcoholDraft
 }
 
 const fresh = (keep?: Partial<Draft>): Draft => {
@@ -30,6 +32,7 @@ const fresh = (keep?: Partial<Draft>): Draft => {
     mood: 0,
     pain: 0,
     notes: '',
+    alcohol: { count: 1 },
     ...keep,
   }
 }

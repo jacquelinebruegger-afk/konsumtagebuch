@@ -1,3 +1,5 @@
+import type { AlcoholDetail } from './alcohol'
+
 export type Lang = 'de' | 'fr' | 'it'
 
 export interface Category {
@@ -25,6 +27,8 @@ export interface Entry {
   mood: number
   pain: number
   notes: string
+  /** Nur bei Alkohol: Art und Portion; amount enthält dann die berechneten Standardgetränke. */
+  alcohol?: AlcoholDetail
 }
 
 export type GoalPeriod = 'week' | 'month' | 'custom'

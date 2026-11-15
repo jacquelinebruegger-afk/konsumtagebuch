@@ -1,14 +1,18 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { IconChevronDown, IconPlus, IconSearch } from '../components/Icons'
+import { AlcoholFields } from '../components/AlcoholFields'
 import { Badge, ConfirmDialog, Field, ScoreSlider, Stepper, TopBar, useGoBack, useToast } from '../components/ui'
 import { hasSpend, unitStep } from '../lib/catalog'
+import { isAlcoholDraftComplete, type AlcoholDraft, standardDrinks, toDetail } from '../lib/alcohol'
 import { combine, toDateStr, toTimeStr } from '../lib/dates'
 import type { Key } from '../lib/de'
 import { useDraft } from '../lib/draft'
 import { useI18n } from '../lib/i18n'
 import { useStore } from '../lib/store'
 import type { Category } from '../lib/types'
+
+const isAlcohol = (c: Category | undefined) => c?.key === 'alcohol'
 
 const FEELINGS = ['craving', 'tension', 'mood', 'pain'] as const
 
@@ -107,7 +111,8 @@ export function WizardDetails() {
   if (!cat) return <Navigate to="/neu/kategorie" replace />
 
   const futureErr = new Date(combine(draft.date, draft.time)) > new Date()
-  const amountErr = draft.amount <= 0
+  const alcohol = isAlcohol(cat)
+  const amountErr = alcohol ? !isAlcoholDraftComplete(draft.alcohol) : draft.amount <= 0
   const valid = !!draft.date && !!draft.time && !futureErr && !amountErr
 
   return (
@@ -124,6 +129,13 @@ export function WizardDetails() {
           </Link>
         </div>
 
+        {alcohol && (
+          <AlcoholFields
+            value={draft.alcohol}
+            onChange={(a) => patch({ alcohol: a })}
+            error={tried && amountErr ? t('alc.error') : undefined}
+          />
+        )}
         <fieldset className="fieldset">
           <legend className="field__label">{t('new.dateTime')}</legend>
           <div className="row2">
@@ -154,6 +166,7 @@ export function WizardDetails() {
           )}
         </fieldset>
 
+        {!alcohol && (
         <AmountFields
           cat={cat}
           amount={draft.amount}
@@ -164,7 +177,7 @@ export function WizardDetails() {
           onSpend={(n) => patch({ spend: n })}
           error={tried && amountErr ? t('new.amountError') : undefined}
         />
-
+        )}
         <Field label={t('new.context')} htmlFor="ctx" optional>
           <input
             id="ctx"
@@ -276,11 +289,13 @@ export function WizardFeeling() {
     saved.current = true
     const cat = data.categories.find((c) => c.id === draft.categoryId)!
     const spendNum = hasSpend(cat) ? draft.spend : 0
+    const alcohol = isAlcohol(cat)
     const entry = addEntry({
       categoryId: draft.categoryId!,
       at: combine(draft.date, draft.time),
-      amount: draft.amount,
-      unitIdx: draft.unitIdx,
+      amount: alcohol ? standardDrinks(draft.alcohol) : draft.amount,
+      unitIdx: alcohol ? 0 : draft.unitIdx,
+      alcohol: alcohol ? toDetail(draft.alcohol) : undefined,
       spend: spendNum > 0 ? spendNum : undefined,
       context: draft.context.trim(),
       craving: draft.craving,
@@ -362,6 +377,9 @@ export function EntryEdit() {
           mood: entry.mood,
           pain: entry.pain,
           notes: entry.notes,
+          alcohol: entry.alcohol
+            ? { type: entry.alcohol.type, serving: entry.alcohol.serving, count: entry.alcohol.count }
+            : (undefined as AlcoholDraft | undefined),
         }
       : null,
   )
@@ -374,7 +392,8 @@ export function EntryEdit() {
 
   const patch = (p: Partial<typeof form>) => setForm((f) => (f ? { ...f, ...p } : f))
   const futureErr = new Date(combine(form.date, form.time)) > new Date()
-  const amountErr = form.amount <= 0
+  const detailed = isAlcohol(cat) && !!form.alcohol
+  const amountErr = detailed ? !isAlcoholDraftComplete(form.alcohol!) : form.amount <= 0
   const valid = !futureErr && !amountErr && !!form.date && !!form.time
 
   const save = () => {
@@ -384,8 +403,9 @@ export function EntryEdit() {
       ...entry,
       categoryId: form.categoryId,
       at: combine(form.date, form.time),
-      amount: form.amount,
-      unitIdx: form.unitIdx,
+      amount: detailed ? standardDrinks(form.alcohol!) : form.amount,
+      unitIdx: detailed ? 0 : form.unitIdx,
+      alcohol: detailed ? toDetail(form.alcohol!) : undefined,
       spend: hasSpend(cat) && form.spend > 0 ? form.spend : undefined,
       context: form.context.trim(),
       craving: form.craving,
@@ -408,7 +428,14 @@ export function EntryEdit() {
               id="cat"
               className="select"
               value={form.categoryId}
-              onChange={(e) => patch({ categoryId: e.target.value, unitIdx: 0 })}
+              onChange={(e) => {
+                const next = data.categories.find((c) => c.id === e.target.value)
+                patch({
+                  categoryId: e.target.value,
+                  unitIdx: 0,
+                  alcohol: isAlcohol(next) ? (form.alcohol ?? { count: 1 }) : undefined,
+                })
+              }}
             >
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -420,6 +447,13 @@ export function EntryEdit() {
           </div>
         </Field>
 
+        {detailed && (
+          <AlcoholFields
+            value={form.alcohol!}
+            onChange={(alcohol) => patch({ alcohol })}
+            error={tried && amountErr ? t('alc.error') : undefined}
+          />
+        )}
         <fieldset className="fieldset">
           <legend className="field__label">{t('new.dateTime')}</legend>
           <div className="row2">
@@ -433,6 +467,8 @@ export function EntryEdit() {
           )}
         </fieldset>
 
+        {!detailed && (
+          <>
         <AmountFields
           cat={cat}
           amount={form.amount}
@@ -443,6 +479,13 @@ export function EntryEdit() {
           onSpend={(n) => patch({ spend: n })}
           error={tried && amountErr ? t('new.amountError') : undefined}
         />
+            {isAlcohol(cat) && (
+              <button type="button" className="btn btn--outline btn--sm alc-upgrade" onClick={() => patch({ alcohol: { count: 1 } })}>
+                {t('alc.detailBtn')}
+              </button>
+            )}
+          </>
+        )}
 
         <h2 className="eyebrow">{t('feel.title')}</h2>
         {FEELINGS.map((f) => (

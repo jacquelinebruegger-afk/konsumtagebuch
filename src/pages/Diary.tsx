@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, Outlet, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { IconBook, IconChevronDown, IconChevronRight, IconClose, IconNote, IconPlus, IconInfo } from '../components/Icons'
 import { Badge, ConfirmDialog, ScoreBar, TopBar, useToast } from '../components/ui'
+import { describeAlcohol } from '../lib/alcohol'
 import { addDays, dayPart, fmtDayLong, fmtDayMedium, fmtNumber, fmtTime, toDateStr } from '../lib/dates'
 import { dailyGoalReachedYesterday, entryDay } from '../lib/goals'
 import { useI18n } from '../lib/i18n'
@@ -132,6 +133,7 @@ export function DiaryLayout() {
                         {entries.map((e) => {
                           const cat = data.categories.find((c) => c.id === e.categoryId)
                           const d = new Date(e.at)
+                          const alc = describeAlcohol(t, (n) => fmtNumber(n, lang), e)
                           return (
                             <li key={e.id}>
                               <Link
@@ -143,11 +145,13 @@ export function DiaryLayout() {
                                 <span className="entry__main">
                                   <span className="entry__name">{catName(cat)}</span>
                                   <span className="entry__time">
+                                    {alc ? `${alc.typeName} · ` : ''}
                                     {t(`daypart.${dayPart(d)}` as Key)} · {fmtTime(d, lang)}
                                   </span>
                                 </span>
                                 <span className="entry__amount">
-                                  {fmtNumber(e.amount, lang)} × {entryUnit(e, cat)}
+                                  {alc ? alc.quantity : `${fmtNumber(e.amount, lang)} × ${entryUnit(e, cat)}`}
+                                  {alc?.sg && <span className="entry__sub">{alc.sg}</span>}
                                 </span>
                                 {e.notes && (
                                   <span className="entry__note" title={t('diary.hasNote')}>
@@ -215,6 +219,7 @@ export function EntryDetail() {
   }
 
   const d = new Date(entry.at)
+  const alc = describeAlcohol(t, (n) => fmtNumber(n, lang), entry)
   const showsSpend = entry.spend != null && entry.spend > 0
   const remove = () => {
     deleteEntry(entry.id)
@@ -238,12 +243,22 @@ export function EntryDetail() {
         </div>
 
         <dl className="facts">
+          {alc && (
+            <div>
+              <dt>{t('entry.alcType')}</dt>
+              <dd>{alc.typeName}</dd>
+            </div>
+          )}
           <div>
             <dt>{t('entry.amount')}</dt>
-            <dd>
-              {fmtNumber(entry.amount, lang)} × {entryUnit(entry, cat)}
-            </dd>
+            <dd>{alc ? alc.quantity : `${fmtNumber(entry.amount, lang)} × ${entryUnit(entry, cat)}`}</dd>
           </div>
+          {alc?.sg && (
+            <div>
+              <dt>{t('entry.sg')}</dt>
+              <dd>{fmtNumber(entry.amount, lang)}</dd>
+            </div>
+          )}
           {showsSpend && (
             <div>
               <dt>{t('entry.spend')}</dt>

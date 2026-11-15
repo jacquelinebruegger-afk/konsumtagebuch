@@ -1,4 +1,5 @@
 import { CATALOG, initialCategories } from './catalog'
+import { standardDrinks, type AlcoholDraft } from './alcohol'
 import { addDays, diffDays, monthRange, toDateStr, uid, weekRange } from './dates'
 import type { AppData, Entry, Goal, Settings } from './types'
 
@@ -61,13 +62,35 @@ export function demoData(now = new Date()): AppData {
   }
 
   const [ws, we] = weekRange(today)
-  const alcoholWeek = [1, 0, 2, 0, 1, 1, 0]
+  const drink = (d: AlcoholDraft): Partial<Entry> & { amount: number } => ({
+    amount: standardDrinks(d),
+    alcohol: { type: d.type!, serving: d.serving, count: d.count },
+  })
+  const alcoholWeek: (AlcoholDraft | null)[] = [
+    { type: 'beer', serving: 'stange-300', count: 1 },
+    null,
+    { type: 'wine', serving: 'glass-200', count: 1 },
+    null,
+    { type: 'spirits', serving: 'shot-40', count: 1 },
+    { type: 'beer', serving: 'large-500', count: 1 },
+    null,
+  ]
+  const alcoholPast = (): AlcoholDraft | null => {
+    const r = rand()
+    if (r < 0.4) return null
+    if (r < 0.7) return { type: 'beer', serving: 'stange-300', count: 1 }
+    if (r < 0.9) return { type: 'wine', serving: 'glass-100', count: 1 + Math.floor(rand() * 2) }
+    return { type: 'spirits', serving: 'shot-20', count: 1 }
+  }
   for (let i = 0; i < 21; i++) {
     const day = addDays(today, -i)
     const offset = diffDays(ws, day)
     const inWeek = offset >= 0
-    const alcohol = inWeek ? alcoholWeek[offset] : rand() > 0.4 ? 1 + Math.floor(rand() * 2) : 0
-    if (alcohol) add(day, 19 + Math.floor(rand() * 3), Math.floor(rand() * 60), 'alcohol', alcohol)
+    const alcohol = inWeek ? alcoholWeek[offset] : alcoholPast()
+    if (alcohol) {
+      const { amount, ...rest } = drink(alcohol)
+      add(day, 19 + Math.floor(rand() * 3), Math.floor(rand() * 60), 'alcohol', amount, rest)
+    }
     if (rand() > 0.15) {
       const n = inWeek && offset === 1 ? 8 : 3 + Math.floor(rand() * 3)
       add(day, 8, 10 + Math.floor(rand() * 40), 'nicotine', Math.ceil(n / 2))
@@ -81,7 +104,7 @@ export function demoData(now = new Date()): AppData {
 
   const [ms, me] = monthRange(today)
   const goals: Goal[] = [
-    { id: uid(), categoryId: 'cat-alcohol', period: 'week', start: ws, end: we, maxPerDay: 2, maxPerPeriod: 7, freeDays: 3 },
+    { id: uid(), categoryId: 'cat-alcohol', period: 'week', start: ws, end: we, maxPerDay: 2, maxPerPeriod: 8, freeDays: 3 },
     { id: uid(), categoryId: 'cat-nicotine', period: 'week', start: ws, end: we, maxPerDay: 5, maxPerPeriod: 35 },
     { id: uid(), categoryId: 'cat-shopping', period: 'month', start: ms, end: me, maxSpend: 100 },
     { id: uid(), categoryId: 'cat-alcohol', period: 'week', start: addDays(ws, -7), end: addDays(we, -7), maxPerDay: 3, maxPerPeriod: 12, freeDays: 1 },
