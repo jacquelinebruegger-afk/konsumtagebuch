@@ -131,6 +131,7 @@ export const de = {
   'entry.unsavedText': 'Sie haben Änderungen vorgenommen, die noch nicht gespeichert sind. Möchten Sie diese speichern oder verwerfen?',
   'entry.unsavedSave': 'Änderungen speichern',
   'entry.unsavedDiscard': 'Änderungen verwerfen',
+  'entry.unsavedKeep': 'Weiter bearbeiten',
   'entry.category': 'Kategorie',
 
   'new.title': 'Neuer Eintrag',

@@ -220,12 +220,17 @@ export function Modal({
   title,
   children,
   actions,
+  dismissLabel,
+  dismissIcon,
 }: {
   open: boolean
   onClose: () => void
   title: string
   children: ReactNode
   actions?: ReactNode
+  /** Beschriftung und Icon des Knopfs oben rechts (Standard: ✕ Schliessen). */
+  dismissLabel?: string
+  dismissIcon?: ReactNode
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   const titleId = useId()
@@ -255,8 +260,8 @@ export function Modal({
               {title}
             </h2>
             <button type="button" className="labelbtn" onClick={onClose}>
-              <IconClose />
-              <span>{t('common.close')}</span>
+              {dismissIcon ?? <IconClose />}
+              <span>{dismissLabel ?? t('common.close')}</span>
             </button>
           </div>
           <div className="modal__content">{children}</div>
@@ -285,6 +290,7 @@ export function Sheet({
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   const titleId = useId()
+  const { t } = useI18n()
 
   useLayoutEffect(() => {
     const d = ref.current
@@ -309,7 +315,16 @@ export function Sheet({
       }}
     >
       <div className="sheet__inner">
-        <TopBar title={title} titleId={titleId} left="close" onLeft={onClose} />
+        <TopBar
+          title={title}
+          titleId={titleId}
+          right={
+            <button type="button" className="labelbtn" onClick={onClose}>
+              <IconClose />
+              <span>{t('common.close')}</span>
+            </button>
+          }
+        />
         <div className="sheet__scroll">{children}</div>
         {actions && <div className="actions">{actions}</div>}
       </div>

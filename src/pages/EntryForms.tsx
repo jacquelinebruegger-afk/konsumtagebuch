@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { IconChevronDown, IconPlus } from '../components/Icons'
+import { IconChevronDown, IconPencil, IconPlus } from '../components/Icons'
 import { CategoryPicker, useSortedCategories } from '../components/CategoryPicker'
 import { ProductFields, WhenFields, dayPartError } from '../components/ProductFields'
 import { Badge, ConfirmDialog, Field, Modal, ScoreSlider, Sheet, Stepper, TopBar, useGoBack, useToast } from '../components/ui'
@@ -462,6 +462,8 @@ export function EntryEdit() {
         open={leaveAsk}
         onClose={() => setLeaveAsk(false)}
         title={t('entry.unsavedTitle')}
+        dismissLabel={t('entry.unsavedKeep')}
+        dismissIcon={<IconPencil />}
         actions={
           <>
             <button

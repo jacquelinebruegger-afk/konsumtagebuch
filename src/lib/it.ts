@@ -133,6 +133,7 @@ export const it: Record<Key, string> = {
   'entry.unsavedText': 'Ha apportato modifiche che non sono ancora state salvate. Desidera salvarle o scartarle?',
   'entry.unsavedSave': 'Salva le modifiche',
   'entry.unsavedDiscard': 'Scarta le modifiche',
+  'entry.unsavedKeep': 'Continua a modificare',
   'entry.category': 'Categoria',
 
   'new.title': 'Nuova voce',

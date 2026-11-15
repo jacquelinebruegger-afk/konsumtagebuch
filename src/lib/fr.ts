@@ -133,6 +133,7 @@ export const fr: Record<Key, string> = {
   'entry.unsavedText': 'Vous avez effectué des modifications qui ne sont pas encore enregistrées. Souhaitez-vous les enregistrer ou les abandonner ?',
   'entry.unsavedSave': 'Enregistrer les modifications',
   'entry.unsavedDiscard': 'Abandonner les modifications',
+  'entry.unsavedKeep': 'Continuer à modifier',
   'entry.category': 'Catégorie',
 
   'new.title': 'Nouvelle entrée',
