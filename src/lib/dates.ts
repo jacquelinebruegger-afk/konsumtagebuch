@@ -56,7 +56,7 @@ export const fmtDayLong = (s: string, lang: Lang) =>
   new Intl.DateTimeFormat(LOCALES[lang], { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(parseDate(s))
 
 export const fmtDayMedium = (s: string, lang: Lang) =>
-  new Intl.DateTimeFormat(LOCALES[lang], { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }).format(parseDate(s))
+  new Intl.DateTimeFormat(LOCALES[lang], { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(parseDate(s))
 
 export const fmtDayShort = (s: string, lang: Lang) =>
   new Intl.DateTimeFormat(LOCALES[lang], { day: '2-digit', month: '2-digit' }).format(parseDate(s))

@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { categoryAbbr } from '../lib/store'
 import { useI18n } from '../lib/i18n'
 import type { Category } from '../lib/types'
+import { CategoryIcon, hasCategoryIcon } from './CategoryIcon'
 import { IconBack, IconClose, IconMinus, IconPlus } from './Icons'
 
+const ICON_SIZE = { sm: 22, md: 32, lg: 44 }
+
 export function Badge({ category, size = 'md' }: { category: Category; size?: 'sm' | 'md' | 'lg' }) {
+  const icon = hasCategoryIcon(category.key)
   return (
-    <span className={`badge badge--${size}`} aria-hidden="true">
-      {categoryAbbr(category)}
+    <span className={`badge badge--${size}${icon ? ' badge--icon' : ''}`} aria-hidden="true">
+      {icon ? <CategoryIcon name={category.key!} size={ICON_SIZE[size]} /> : categoryAbbr(category)}
     </span>
   )
 }

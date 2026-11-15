@@ -18,6 +18,8 @@
   --warn-bar: #b07d00;
   --danger: #a3262a;
   --danger-bg: #fbe9e9;
+  --icon-light: #c9eaf0;
+  --icon-mid: #7fcbd9;
   --danger-bar: #c0392b;
   --radius: 12px;
   --tabbar-h: 68px;
@@ -748,19 +750,43 @@ a {
   letter-spacing: 0.02em;
 }
 .badge--sm {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   font-size: 0.75rem;
 }
 .badge--md {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   font-size: 0.95rem;
 }
 .badge--lg {
-  width: 58px;
-  height: 58px;
+  width: 64px;
+  height: 64px;
   font-size: 1.1rem;
+}
+.cicon {
+  display: block;
+  color: var(--primary);
+  flex: none;
+}
+.cicon .fl {
+  fill: var(--icon-light);
+}
+.cicon .fm {
+  fill: var(--icon-mid);
+}
+.cicon .fw {
+  fill: #fff;
+}
+.cicon .fd {
+  fill: var(--primary);
+}
+.badge--icon {
+  background: #fff;
+  border: 1.5px solid var(--line);
+}
+.badge--icon.badge--sm {
+  border-width: 1px;
 }
 .badge--add {
   background: transparent;
