@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { IconCheck, IconChevronRight, IconPlus, IconTarget } from '../components/Icons'
+import { IconChat, IconCheck, IconChevronRight, IconPlus, IconTarget } from '../components/Icons'
 import { Badge, TopBar } from '../components/ui'
 import { fmtDayLong, toDateStr } from '../lib/dates'
 import type { Key } from '../lib/de'
@@ -135,6 +135,16 @@ export function HomePage() {
             </div>
           </>
         )}
+        <Link to="/mehr/unterstuetzung" className="supporttile">
+          <span className="supporttile__icon" aria-hidden="true">
+            <IconChat size={24} />
+          </span>
+          <span className="supporttile__text">
+            <span className="supporttile__title">{t('support.title')}</span>
+            <span className="supporttile__hint">{t('home.supportHint')}</span>
+          </span>
+          <IconChevronRight size={18} className="supporttile__chev" />
+        </Link>
       </div>
     </div>
   )

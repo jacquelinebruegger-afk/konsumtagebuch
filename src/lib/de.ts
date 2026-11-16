@@ -95,6 +95,7 @@ export const de = {
   'home.toDiary': 'Zum Tagebuch',
   'home.goals': 'Meine Ziele',
   'home.allGoals': 'Alle Ziele',
+  'home.supportHint': 'Anonyme Online-Beratung von SafeZone',
 
   'diary.title': 'Tagebuch',
   'diary.new': 'Neuer Eintrag',

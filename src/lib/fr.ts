@@ -97,6 +97,7 @@ export const fr: Record<Key, string> = {
   'home.toDiary': 'Vers le journal',
   'home.goals': 'Mes objectifs',
   'home.allGoals': 'Tous les objectifs',
+  'home.supportHint': 'Conseil en ligne anonyme de SafeZone',
 
   'diary.title': 'Journal',
   'diary.new': 'Nouvelle entrée',

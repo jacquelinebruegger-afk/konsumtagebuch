@@ -138,3 +138,11 @@ export const IconBell = (p: P) =>
     </>,
     p,
   )
+export const IconChat = (p: P) =>
+  base(
+    <>
+      <path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
+      <path d="M8 10h8M8 13h5" />
+    </>,
+    p,
+  )
