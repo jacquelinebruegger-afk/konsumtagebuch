@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Outlet, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
-import { IconBook, IconChevronDown, IconChevronRight, IconClose, IconPlus, IconInfo } from '../components/Icons'
+import { IconBook, IconChevronDown, IconChevronRight, IconClose, IconPlus, IconInfo, IconShare } from '../components/Icons'
 import { productTypesSummary, useProductLabels } from '../components/ProductFields'
 import { productSet, sortProducts } from '../lib/catalog'
 import { Badge, ConfirmDialog, ScoreBar, Sheet, TopBar, useGoBack, useToast } from '../components/ui'
@@ -11,6 +11,7 @@ import { useStore } from '../lib/store'
 import type { Key } from '../lib/de'
 import type { Entry } from '../lib/types'
 import { EntryEdit } from './EntryForms'
+import { ShareContent } from './More'
 
 export function DiaryLayout() {
   const { t, tn, lang, catName, entryUnit } = useI18n()
@@ -33,6 +34,7 @@ export function DiaryLayout() {
 
   const [open, setOpen] = useState<Set<string>>(() => new Set(groups.slice(0, 1).map(([d]) => d)))
   const [dismissed, setDismissed] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
 
   const expandDay = (location.state as { expandDay?: string } | null)?.expandDay
   useEffect(() => {
@@ -68,18 +70,21 @@ export function DiaryLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dismissed, data.settings.push, data.settings.reminder, data.goals, data.entries, data.categories, lang, today])
 
-  const newBtn = (
-    <Link to="/neu/kategorie" className="btn btn--primary btn--sm">
-      <IconPlus size={20} />
-      <span>{t('diary.newShort')}</span>
-    </Link>
-  )
-
   return (
     <>
       <section className="screen" aria-label={t('diary.title')}>
-        <TopBar title={t('diary.title')} right={newBtn} />
+        <TopBar title={t('diary.title')} />
         <div className="content">
+          <div className="diary-actions">
+            <Link to="/neu/kategorie" className="btn btn--primary btn--sm">
+              <IconPlus size={20} />
+              <span>{t('diary.newShort')}</span>
+            </Link>
+            <button type="button" className="btn btn--secondary btn--sm" onClick={() => setShareOpen(true)}>
+              <IconShare size={20} />
+              <span>{t('share.title')}</span>
+            </button>
+          </div>
           {banner && (
             <div className={`banner banner--${banner.kind} banner--dismissible`} role="status">
               <IconInfo />
@@ -168,7 +173,13 @@ export function DiaryLayout() {
           )}
         </div>
       </section>
-
+      {shareOpen && (
+        <Sheet title={t('share.title')} onClose={() => setShareOpen(false)}>
+          <div className="content prose">
+            <ShareContent />
+          </div>
+        </Sheet>
+      )}
       <Outlet />
     </>
   )

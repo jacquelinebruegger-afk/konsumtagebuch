@@ -1435,6 +1435,15 @@ a {
   flex: none;
   color: var(--primary);
 }
+.diary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.diary-actions .btn {
+  flex: 1 1 auto;
+}
 .homegoals {
   padding: 12px;
   background: var(--bg);
@@ -1847,9 +1856,13 @@ body:has(dialog[open]) {
 
 .toast-region {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: calc(112px + env(safe-area-inset-bottom));
+  inset: auto 0 calc(112px + env(safe-area-inset-bottom)) 0;
+  width: auto;
+  height: auto;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
   z-index: 60;
   display: flex;
   justify-content: center;
@@ -2051,7 +2064,7 @@ body:has(dialog[open]) {
     padding: 0 32px 16px;
   }
   .toast-region {
-    bottom: 28px;
+    inset: auto 0 28px 0;
   }
   .modal__actions {
     flex-direction: row-reverse;

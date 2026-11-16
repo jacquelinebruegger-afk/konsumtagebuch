@@ -398,8 +398,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [msg, setMsg] = useState<{ text: string; n: number } | null>(null)
   const show = useCallback((text: string) => setMsg((m) => ({ text, n: (m?.n ?? 0) + 1 })), [])
 
+  const regionRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (!msg) return
+    // Hinweis in die oberste Ebene holen, damit er auch über geöffneten Dialogen und Overlays sichtbar ist.
+    const region = regionRef.current as (HTMLDivElement & { showPopover?: () => void; hidePopover?: () => void }) | null
+    try {
+      region?.hidePopover?.()
+      region?.showPopover?.()
+    } catch {
+      /* Popover wird nicht unterstützt: Hinweis erscheint wie bisher */
+    }
     const id = window.setTimeout(() => setMsg(null), 4000)
     return () => window.clearTimeout(id)
   }, [msg])
@@ -407,7 +417,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastCtx.Provider value={show}>
       {children}
-      <div className="toast-region" role="status" aria-live="polite">
+      <div ref={regionRef} className="toast-region" role="status" aria-live="polite" {...{ popover: 'manual' }}>
         {msg && (
           <div className="toast" key={msg.n}>
             {msg.text}

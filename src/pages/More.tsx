@@ -278,7 +278,8 @@ const randomCode = () => {
   return `${Array.from({ length: 4 }, pick).join('')}-${Array.from({ length: 4 }, pick).join('')}`
 }
 
-export function SharePage() {
+/** Inhalt von «Tagebuch teilen». Wird in der Profil-Seite und im Overlay im Tagebuch verwendet. */
+export function ShareContent() {
   const { t, lang } = useI18n()
   const { data, setShare } = useStore()
   const toast = useToast()
@@ -295,7 +296,7 @@ export function SharePage() {
   }
 
   return (
-    <SubPage title={t('share.title')}>
+    <>
       <p>{t('share.text')}</p>
       {share ? (
         <div className="infobox">
@@ -354,6 +355,15 @@ export function SharePage() {
         <p>{t('share.dialogText')}</p>
         <p className="code code--big">{share?.code}</p>
       </Modal>
+    </>
+  )
+}
+
+export function SharePage() {
+  const { t } = useI18n()
+  return (
+    <SubPage title={t('share.title')}>
+      <ShareContent />
     </SubPage>
   )
 }
