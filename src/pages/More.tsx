@@ -368,13 +368,23 @@ export function SharePage() {
   )
 }
 
+/** Inhalt von «Sie brauchen Unterstützung?». Wird im Profil als Seite und auf der Startseite als Overlay gezeigt. */
+export function SupportContent() {
+  const { t } = useI18n()
+  return (
+    <>
+      <p>{t('support.p1')}</p>
+      <p>{t('support.p2')}</p>
+      <ExternalLink href={SAFEZONE.consulting}>{t('support.link')}</ExternalLink>
+    </>
+  )
+}
+
 export function SupportPage() {
   const { t } = useI18n()
   return (
     <SubPage title={t('support.title')}>
-      <p>{t('support.p1')}</p>
-      <p>{t('support.p2')}</p>
-      <ExternalLink href={SAFEZONE.consulting}>{t('support.link')}</ExternalLink>
+      <SupportContent />
     </SubPage>
   )
 }

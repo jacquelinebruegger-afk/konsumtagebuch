@@ -1,11 +1,12 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IconChat, IconCheck, IconChevronRight, IconPlus, IconTarget } from '../components/Icons'
-import { Badge, TopBar } from '../components/ui'
+import { Badge, Sheet, TopBar } from '../components/ui'
 import { fmtDayLong, toDateStr } from '../lib/dates'
 import type { Key } from '../lib/de'
 import { dailyGoalOnTrackToday, dailyGoalReachedYesterday, entryDay } from '../lib/goals'
 import { useI18n } from '../lib/i18n'
+import { SupportContent } from './More'
 import { useStore } from '../lib/store'
 import { RowView, useResults } from './Goals'
 
@@ -19,6 +20,7 @@ function greetingKey(d: Date): Key {
 export function HomePage() {
   const { t, tn, lang, catName } = useI18n()
   const { data } = useStore()
+  const [supportOpen, setSupportOpen] = useState(false)
   const results = useResults()
   const now = new Date()
   const today = toDateStr(now)
@@ -135,7 +137,7 @@ export function HomePage() {
             </div>
           </>
         )}
-        <Link to="/mehr/unterstuetzung" className="supporttile">
+        <button type="button" className="supporttile" onClick={() => setSupportOpen(true)}>
           <span className="supporttile__icon" aria-hidden="true">
             <IconChat size={24} />
           </span>
@@ -144,7 +146,14 @@ export function HomePage() {
             <span className="supporttile__hint">{t('home.supportHint')}</span>
           </span>
           <IconChevronRight size={18} className="supporttile__chev" />
-        </Link>
+        </button>
+        {supportOpen && (
+          <Sheet title={t('support.title')} onClose={() => setSupportOpen(false)}>
+            <div className="content prose">
+              <SupportContent />
+            </div>
+          </Sheet>
+        )}
       </div>
     </div>
   )

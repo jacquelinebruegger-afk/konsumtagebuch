@@ -1399,6 +1399,10 @@ a {
   border-radius: 16px;
   color: var(--ink);
   text-decoration: none;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 .supporttile:hover {
   border-color: var(--primary);
@@ -1441,8 +1445,8 @@ a {
   gap: 12px;
   margin-bottom: 16px;
 }
-.diary-actions .btn {
-  flex: 1 1 auto;
+.diary-actions .btn--primary {
+  margin-left: auto;
 }
 .homegoals {
   padding: 12px;

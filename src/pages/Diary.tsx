@@ -76,14 +76,14 @@ export function DiaryLayout() {
         <TopBar title={t('diary.title')} />
         <div className="content">
           <div className="diary-actions">
-            <Link to="/neu/kategorie" className="btn btn--primary btn--sm">
-              <IconPlus size={20} />
-              <span>{t('diary.newShort')}</span>
-            </Link>
             <button type="button" className="btn btn--secondary btn--sm" onClick={() => setShareOpen(true)}>
               <IconShare size={20} />
               <span>{t('share.title')}</span>
             </button>
+            <Link to="/neu/kategorie" className="btn btn--primary btn--sm">
+              <IconPlus size={20} />
+              <span>{t('diary.newShort')}</span>
+            </Link>
           </div>
           {banner && (
             <div className={`banner banner--${banner.kind} banner--dismissible`} role="status">
