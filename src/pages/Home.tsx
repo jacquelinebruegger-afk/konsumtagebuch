@@ -105,33 +105,34 @@ export function HomePage() {
         {activeGoals.length > 0 && (
           <>
             <h2 className="eyebrow">{t('home.goals')}</h2>
-            <ul className="cards">
-              {activeGoals.map((r) => {
-                const cat = data.categories.find((c) => c.id === r.goal.categoryId)
-                if (!cat) return null
-                return (
-                  <li key={r.goal.id} className="card">
-                    <Link to={`/ziele/${r.goal.id}`} className="card__head" aria-label={t('goals.open', { name: catName(cat) })}>
-                      <Badge category={cat} />
-                      <span className="card__title">
-                        <span className="card__name">{catName(cat)}</span>
-                      </span>
-                      <IconChevronRight size={18} className="card__chev" />
-                    </Link>
-                    <ul className="grows">
-                      {r.rows.map((row) => (
-                        <RowView key={row.kind} row={row} period={r.goal.period} />
-                      ))}
-                    </ul>
-                  </li>
-                )
-              })}
-            </ul>
-            <p className="home__all">
-              <Link to="/ziele" className="btn btn--link">
+            <div className="homegoals">
+              <ul className="cards">
+                {activeGoals.map((r) => {
+                  const cat = data.categories.find((c) => c.id === r.goal.categoryId)
+                  if (!cat) return null
+                  return (
+                    <li key={r.goal.id} className="card">
+                      <Link to={`/ziele/${r.goal.id}`} className="card__head" aria-label={t('goals.open', { name: catName(cat) })}>
+                        <Badge category={cat} />
+                        <span className="card__title">
+                          <span className="card__name">{catName(cat)}</span>
+                        </span>
+                        <IconChevronRight size={18} className="card__chev" />
+                      </Link>
+                      <ul className="grows">
+                        {r.rows.map((row) => (
+                          <RowView key={row.kind} row={row} period={r.goal.period} />
+                        ))}
+                      </ul>
+                    </li>
+                  )
+                })}
+              </ul>
+              <Link to="/ziele" className="homecard__link homegoals__all">
                 {t('home.allGoals')}
+                <IconChevronRight size={18} />
               </Link>
-            </p>
+            </div>
           </>
         )}
       </div>
