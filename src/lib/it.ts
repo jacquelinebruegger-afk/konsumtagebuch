@@ -100,7 +100,7 @@ export const it: Record<Key, string> = {
 
   'diary.title': 'Diario',
   'diary.new': 'Nuova voce',
-  'diary.newShort': 'Voce',
+  'diary.newShort': 'Aggiungi una voce',
   'diary.today': 'Oggi',
   'diary.yesterday': 'Ieri',
   'diary.count.one': '1 voce',
@@ -232,7 +232,7 @@ export const it: Record<Key, string> = {
 
   'goals.title': 'Obiettivi',
   'goals.new': 'Nuovo obiettivo',
-  'goals.newShort': 'Obiettivo',
+  'goals.newShort': 'Aggiungi un obiettivo',
   'goals.edit': 'Modifica obiettivo',
   'goals.empty.title': 'Ancora nessun obiettivo',
   'goals.empty.text': 'Si ponga dei limiti per un giorno, una settimana o un mese e veda come procede.',

@@ -72,7 +72,6 @@ export function DiaryLayout() {
     <Link to="/neu/kategorie" className="btn btn--primary btn--sm">
       <IconPlus size={20} />
       <span>{t('diary.newShort')}</span>
-      <span className="sr-only">: {t('diary.new')}</span>
     </Link>
   )
 

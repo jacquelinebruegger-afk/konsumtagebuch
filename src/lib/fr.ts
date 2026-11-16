@@ -100,7 +100,7 @@ export const fr: Record<Key, string> = {
 
   'diary.title': 'Journal',
   'diary.new': 'Nouvelle entrée',
-  'diary.newShort': 'Entrée',
+  'diary.newShort': 'Ajouter une entrée',
   'diary.today': 'Aujourd’hui',
   'diary.yesterday': 'Hier',
   'diary.count.one': '1 entrée',
@@ -232,7 +232,7 @@ export const fr: Record<Key, string> = {
 
   'goals.title': 'Objectifs',
   'goals.new': 'Nouvel objectif',
-  'goals.newShort': 'Objectif',
+  'goals.newShort': 'Ajouter un objectif',
   'goals.edit': 'Modifier l’objectif',
   'goals.empty.title': 'Aucun objectif pour l’instant',
   'goals.empty.text': 'Fixez-vous des limites pour un jour, une semaine ou un mois et suivez vos progrès.',

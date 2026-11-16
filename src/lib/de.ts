@@ -98,7 +98,7 @@ export const de = {
 
   'diary.title': 'Tagebuch',
   'diary.new': 'Neuer Eintrag',
-  'diary.newShort': 'Eintrag',
+  'diary.newShort': 'Eintrag erfassen',
   'diary.today': 'Heute',
   'diary.yesterday': 'Gestern',
   'diary.count.one': '1 Eintrag',
@@ -230,7 +230,7 @@ export const de = {
 
   'goals.title': 'Ziele',
   'goals.new': 'Neues Ziel',
-  'goals.newShort': 'Ziel',
+  'goals.newShort': 'Ziel erfassen',
   'goals.edit': 'Ziel bearbeiten',
   'goals.empty.title': 'Noch keine Ziele',
   'goals.empty.text': 'Setzen Sie sich Grenzen für einen Tag, eine Woche oder einen Monat und sehen Sie, wie Sie vorankommen.',

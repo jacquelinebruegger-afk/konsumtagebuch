@@ -144,7 +144,6 @@ export function GoalsPage() {
           <Link to="/ziele/neu" className="btn btn--primary btn--sm">
             <IconPlus size={20} />
             <span>{t('goals.newShort')}</span>
-            <span className="sr-only">: {t('goals.new')}</span>
           </Link>
         }
       />
