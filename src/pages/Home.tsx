@@ -137,7 +137,7 @@ export function HomePage() {
             </div>
           </>
         )}
-        <button type="button" className="supporttile" onClick={() => setSupportOpen(true)}>
+        <button type="button" className="supporttile supporttile--primary" onClick={() => setSupportOpen(true)}>
           <span className="supporttile__icon" aria-hidden="true">
             <IconChat size={24} />
           </span>
@@ -145,7 +145,6 @@ export function HomePage() {
             <span className="supporttile__title">{t('support.title')}</span>
             <span className="supporttile__hint">{t('home.supportHint')}</span>
           </span>
-          <IconChevronRight size={18} className="supporttile__chev" />
         </button>
         {supportOpen && (
           <Sheet title={t('support.title')} onClose={() => setSupportOpen(false)}>
